@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -51,7 +50,8 @@ public class GameManager : MonoBehaviour
     }
     void AttackPerformed(InputAction.CallbackContext context)
     {
-        string[] keysPressedThisFrame = [];
+        
+        string[] keysPressedThisFrame = null; // []
 
         if (Keyboard.current != null)
         {
