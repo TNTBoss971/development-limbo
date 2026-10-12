@@ -11,6 +11,7 @@ public class CreditsSceneManager : MonoBehaviour
     [SerializeField] protected float _finalLocation;
     [SerializeField] protected float _scrollSpeed = 20f;
     [SerializeField] protected float _fadeSpeed = 1.5f;
+    [SerializeField] protected float _fadeOutro = 3.5f;
 
     // Internal Variables
     protected Vector3 _initialPos;
@@ -59,9 +60,9 @@ public class CreditsSceneManager : MonoBehaviour
         }
         // Once Credits Roll, it automaticall goes to main menu
 
-        StartCoroutine(FadeIn(false, _fadeSpeed));
+        StartCoroutine(FadeOut(false, _fadeOutro));
 
-        Invoke("LoadMainMenu", _fadeSpeed);
+        Invoke("LoadMainMenu", _fadeOutro);
     }
 
     IEnumerator FadeIn(bool fadeIn, float speed)
@@ -73,6 +74,29 @@ public class CreditsSceneManager : MonoBehaviour
         float timing = 0.0f;
 
         while (timing <= _fadeSpeed)
+        {
+            // Loop runs until target color is reached.
+            _fade.color = Color.Lerp(startColor, targetColor, timing / speed);
+
+            // Increment timing by the time passed since last frame.
+            timing += Time.deltaTime;
+
+            yield return null;
+        }
+        // just as an extra precaution
+        _fade.color = targetColor;
+    }
+
+    // This is just like the Fade in, but it is specifically for the outro so it's much more customizable.s
+    IEnumerator FadeOut(bool fadeIn, float speed)
+    {
+        // initializes all values
+        Color targetColor = fadeIn ? new Color(0f, 0f, 0f, 0f) : new Color(0f, 0f, 0f, 1f);
+        Color startColor = fadeIn ? new Color(0f, 0f, 0f, 1f) : new Color(0f, 0f, 0f, 0f);
+
+        float timing = 0.0f;
+
+        while (timing <= _fadeOutro)
         {
             // Loop runs until target color is reached.
             _fade.color = Color.Lerp(startColor, targetColor, timing / speed);
