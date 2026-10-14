@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Hierarchy;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -30,6 +31,9 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        inputObjectQueue.Add(CreateKey());
+        inputObjectQueue.Add(CreateKey());
+        inputObjectQueue.Add(CreateKey());
         inputObjectQueue.Add(CreateKey());
 
         // define input actions
@@ -96,20 +100,24 @@ public class GameManager : MonoBehaviour
                 // Lmao idiot dies to a key press (Destory the targetedInput)
                 Destroy(targetedInput);
                 AlterPlayerValue("score", 1);
+
+                // if the inputObjectQueue isn't empty (if it only has one item, then it would be the object we just destroyed)
+                if (inputObjectQueue.Count > 1)
+                {
+                    // move the inputObjectQueue up so that there isn't null in the list
+                    inputObjectQueue = inputObjectQueue.GetRange(1, inputObjectQueue.Count-1);
+                }
             }
             else
             {
+                // player messed up, so let's punish them!!!
 
+                // maybe change the color pallet to red/some other hostile color?
+
+                CreateParticleEffect("incorrectInput", targetedInput.transform);
+                AlterPlayerValue("lives", -1);
             }
         }
-
-            // IF pressed_key is the same as targeted_input’s stored key:
-                // Play some fun particle effects at targeted_input’s position!
-                // Destroy targeted_input, and shift all items in input_queue 1 towards the front.
-                // SET player_score to player_score + 1
-            // ELSE:
-                // SET player_lives to player_lives - 1
-                // Play some screenshake, increasing the less lives the player has.
     }
 
     public void AlterPlayerValue(string valueId, float alterAmount)
@@ -147,6 +155,8 @@ public class GameManager : MonoBehaviour
         GameObject clone = Instantiate(inputObjectPrefab, inputObjectsParent);
         // and assign its key
         clone.GetComponent<InputObjectController>().assignedKey = PickKey();
+        // for now, set it a random position
+        clone.transform.position = new Vector2(Random.Range(-9,9), Random.Range(-5,5));
         return clone;
     }
 
