@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Scene Objects")]
     public Transform inputObjectsParent;
+    public Transform defendPoint;
 
     [Header("Prefabs")]
     // needed prefabs
@@ -34,7 +35,10 @@ public class GameManager : MonoBehaviour
         inputObjectQueue.Add(CreateKey());
         inputObjectQueue.Add(CreateKey());
         inputObjectQueue.Add(CreateKey());
-        inputObjectQueue.Add(CreateKey());
+        for (int i = 0; i < 10; i++)
+        {
+            inputObjectQueue.Add(CreateKey());
+        }
 
         // define input actions
         attackAction = InputSystem.actions.FindAction("AttackInput");
@@ -157,6 +161,18 @@ public class GameManager : MonoBehaviour
         clone.GetComponent<InputObjectController>().assignedKey = PickKey();
         // for now, set it a random position
         clone.transform.position = new Vector2(Random.Range(-9,9), Random.Range(-5,5));
+
+        // circular positioning
+
+        // get a random degree from between 0 and 180, then convert to radians
+        float rot = Random.Range(0, 180) / 180f * Mathf.PI;
+        // get the direction as a vector
+        Vector2 rotAsVec = new Vector2(Mathf.Cos(rot), Mathf.Sin(rot));
+        // set the clone's starting position to the direction vector multiplied by starting distance offset by defendPoint's position
+        clone.transform.position = new Vector2 (rotAsVec.x * 10 + defendPoint.transform.position.x, rotAsVec.y * 10 + defendPoint.transform.position.y);
+        // set target to defend point
+        clone.GetComponent<InputObjectController>().target = defendPoint.transform;
+
         return clone;
     }
 

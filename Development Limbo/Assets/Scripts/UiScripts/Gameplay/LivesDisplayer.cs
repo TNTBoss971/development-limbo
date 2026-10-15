@@ -18,12 +18,29 @@ public class LivesDisplayer : MonoBehaviour
         for (int i = 0; i < maxLives; i++)
         {
             GameObject lifeClone = Instantiate(lifePrefab, gameObject.transform);
+            // position the object appropriately
+            lifeClone.transform.localPosition = new Vector2(i * 30, 0);
+            
+            activeLifeObjects[i] = lifeClone;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        // enable life objects equal to the lives left
+        for (int i = 0; i < maxLives; i++)
+        {
+            if (gameManager.playerLives > i)
+            {
+                // this object represents a number of lives the player has, show it
+                activeLifeObjects[i].SetActive(true);
+            }
+            else
+            {
+                // this object represents a number of lives the player doesn't have, hide it
+                activeLifeObjects[i].SetActive(false);
+            }
+        }
     }
 }
