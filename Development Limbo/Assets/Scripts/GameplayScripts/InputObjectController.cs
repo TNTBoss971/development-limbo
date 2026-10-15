@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class InputObjectController : MonoBehaviour
 {
     public string assignedKey; // the key the player needs to press in order to attack this
-    public TextMeshPro textMeshPro; // the display text
+    private TextMeshPro textMeshPro; // the display text
 
     public Transform target; // defend point's position
     public Vector2 targetVector; // normalized movement vector
@@ -28,7 +28,9 @@ public class InputObjectController : MonoBehaviour
     {
         if (target != null)
         {
+            // get the direction to target
             targetVector = (target.position - this.transform.position).normalized;
+            // move towards target
             this.transform.position = new Vector2(transform.position.x + targetVector.x * speed, transform.position.y + targetVector.y * speed);
         }
     }

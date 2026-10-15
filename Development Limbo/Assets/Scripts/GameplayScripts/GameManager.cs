@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Hierarchy;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -13,10 +14,12 @@ public class GameManager : MonoBehaviour
     [Header("Input Objects Info")]
     public List<GameObject> inputObjectQueue; // stores input objects in order of creation
     public GameObject targetedInput; // always the first object in inputObjectQueue
+    public float spawnDelay; // how long until the next input spawn
 
     [Header("Scene Objects")]
     public Transform inputObjectsParent;
     public Transform defendPoint;
+    public GameObject focusIndicator; // tells the player which input is first in queue
 
     [Header("Prefabs")]
     // needed prefabs
@@ -32,13 +35,6 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        inputObjectQueue.Add(CreateKey());
-        inputObjectQueue.Add(CreateKey());
-        inputObjectQueue.Add(CreateKey());
-        for (int i = 0; i < 10; i++)
-        {
-            inputObjectQueue.Add(CreateKey());
-        }
 
         // define input actions
         attackAction = InputSystem.actions.FindAction("AttackInput");
@@ -52,10 +48,27 @@ public class GameManager : MonoBehaviour
         // if the queue has an item in it, set the target input to the first item
         if (inputObjectQueue.Count > 0) {
             targetedInput = inputObjectQueue[0];
+            // set the focus indicator to the same position as the target
+            focusIndicator.transform.position = targetedInput.transform.position;
+        }
+        else
+        {
+            // move the focus indicator far away so it doesn't show up on screen
+            focusIndicator.transform.position = new Vector2 (100, 100);
         }
 
-        // get input actions
+        SpawnLogic();
     }
+
+    public void SpawnLogic()
+    {
+        if (spawnDelay <= Time.time)
+        {
+            inputObjectQueue.Add(CreateKey());
+            spawnDelay = Time.time + Random.Range(0.1f, 1f);
+        }
+    }
+
     void AttackPerformed(InputAction.CallbackContext context)
     {
         // will be a list of all keys pressed
@@ -111,6 +124,11 @@ public class GameManager : MonoBehaviour
                     // move the inputObjectQueue up so that there isn't null in the list
                     inputObjectQueue = inputObjectQueue.GetRange(1, inputObjectQueue.Count-1);
                 }
+                else
+                {
+                    inputObjectQueue = new List<GameObject>();
+                    targetedInput = null;
+                }
             }
             else
             {
@@ -123,6 +141,35 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    
+    public GameObject CreateKey()
+    {
+        /*
+        This function returns a created Input GameObject
+        */
+        // clone the prefab
+        GameObject clone = Instantiate(inputObjectPrefab, inputObjectsParent);
+        // and assign its key
+        clone.GetComponent<InputObjectController>().assignedKey = PickKey();
+        // for now, set it a random position
+        clone.transform.position = new Vector2(Random.Range(-9,9), Random.Range(-5,5));
+
+        // circular positioning
+
+        // get a random degree from between 45 and 135, then convert to radians
+        float rot = Random.Range(45, 135) / 180f * Mathf.PI;
+        // get the direction as a vector
+        Vector2 rotAsVec = new Vector2(Mathf.Cos(rot), Mathf.Sin(rot));
+        // set the clone's starting position to the direction vector multiplied by starting distance offset by defendPoint's position
+        float startingDistance = 20f;
+        clone.transform.position = new Vector2 (rotAsVec.x * startingDistance + defendPoint.transform.position.x, rotAsVec.y * startingDistance + defendPoint.transform.position.y);
+        // set target to defend point
+        clone.GetComponent<InputObjectController>().target = defendPoint.transform;
+
+        return clone;
+    }
+
 
     public void AlterPlayerValue(string valueId, float alterAmount)
     {
@@ -148,32 +195,20 @@ public class GameManager : MonoBehaviour
                 // :( life is awful and everthing hurts. without my score, its just not worth it anymore
             }
         }
-    }
-
-    public GameObject CreateKey()
-    {
-        /*
-        This function returns a created Input GameObject
-        */
-        // clone the prefab
-        GameObject clone = Instantiate(inputObjectPrefab, inputObjectsParent);
-        // and assign its key
-        clone.GetComponent<InputObjectController>().assignedKey = PickKey();
-        // for now, set it a random position
-        clone.transform.position = new Vector2(Random.Range(-9,9), Random.Range(-5,5));
-
-        // circular positioning
-
-        // get a random degree from between 0 and 180, then convert to radians
-        float rot = Random.Range(0, 180) / 180f * Mathf.PI;
-        // get the direction as a vector
-        Vector2 rotAsVec = new Vector2(Mathf.Cos(rot), Mathf.Sin(rot));
-        // set the clone's starting position to the direction vector multiplied by starting distance offset by defendPoint's position
-        clone.transform.position = new Vector2 (rotAsVec.x * 10 + defendPoint.transform.position.x, rotAsVec.y * 10 + defendPoint.transform.position.y);
-        // set target to defend point
-        clone.GetComponent<InputObjectController>().target = defendPoint.transform;
-
-        return clone;
+        else if (valueId == "lives")
+        {
+            // alter the lives
+            playerLives += (int)alterAmount;
+            // then find the desired effect and play it
+            if (alterAmount > 0)
+            {
+                // unlikely we'll add a life gain mechanic, but here is it's spot if we do
+            }
+            else
+            {
+                // ouch
+            }
+        }
     }
 
     public void CreateParticleEffect(string particleId, Transform locationInfo)
@@ -187,6 +222,6 @@ public class GameManager : MonoBehaviour
         /*
         Returns a key as a string
         */
-        return tempKeys[Random.Range(0,9)];
+        return tempKeys[Random.Range(0,tempKeys.Length)];
     }
 }
