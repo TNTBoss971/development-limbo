@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172eeb90e2034f140bd04344923f6c68, type: 3}
+  m_Name: QWERTY
+  m_EditorClassIdentifier: 
+  keyInfos:
+  - {fileID: 11400000, guid: cded8c1cd4393b341801e1417b2b1ad0, type: 2}
+  - {fileID: 11400000, guid: 44b361f0618a28a4b9514687cf5b1eeb, type: 2}
+  - {fileID: 11400000, guid: 9154857b85b792841a12d4f41ba93939, type: 2}
+  - {fileID: 11400000, guid: c6e5b074e54a35340820619f9a59f6dd, type: 2}
+  - {fileID: 11400000, guid: 67102c5f89e6e514da38545541ac7e15, type: 2}
+  - {fileID: 11400000, guid: 5a54c0eab29ea0446a23d055bba0db34, type: 2}
+  - {fileID: 11400000, guid: 3cf5a631d9a3a0446ac576d0a22698b6, type: 2}
+  - {fileID: 11400000, guid: 0feae5ee8f9d70c4e99c4229f76b9a67, type: 2}
+  - {fileID: 11400000, guid: f63cb5f5e267a874d8a62e672734aa0f, type: 2}
+  - {fileID: 11400000, guid: 3407a7db313a3f4458d60e6ed5f7a54d, type: 2}

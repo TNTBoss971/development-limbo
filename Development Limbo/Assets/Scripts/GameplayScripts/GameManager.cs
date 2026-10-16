@@ -1,10 +1,11 @@
+using NUnit.Framework.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.Hierarchy;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.Windows;
+using static UnityEngine.GraphicsBuffer;
 public class GameManager : MonoBehaviour
 {
     [Header("Player Info")]
@@ -16,6 +17,16 @@ public class GameManager : MonoBehaviour
     public GameObject targetedInput; // always the first object in inputObjectQueue
     public float spawnDelay; // how long until the next input spawn
 
+    [Header("\"Drifting Point\" Logic")]
+    public float pointX;
+    public float pointY;
+    public Vector2 targetVector;
+    public float targetTime; // not an AMOUNT of time but rather a POINT in time
+    public float gameStartTime; // helps track how long gameplay has been running
+
+    public KeyLayout layout;
+
+
     [Header("Scene Objects")]
     public Transform inputObjectsParent;
     public Transform defendPoint;
@@ -24,8 +35,8 @@ public class GameManager : MonoBehaviour
     [Header("Prefabs")]
     // needed prefabs
     public GameObject inputObjectPrefab; // the prefab for all spawned input objects
-    [Header("Input Actions")]
 
+    [Header("Input Actions")]
     public InputAction attackAction;
 
     [Header("TEMPORARY")]
@@ -39,7 +50,20 @@ public class GameManager : MonoBehaviour
         // define input actions
         attackAction = InputSystem.actions.FindAction("AttackInput");
         attackAction.performed += AttackPerformed;
+
+
+        gameStartTime = Time.time;
+        PickRandomTarget();
     }
+
+    /*
+    START:
+	    PICK_RANDOM_TARGET
+
+
+    FIXED_UPDATE:
+	    
+    */
 
 
     // Update is called once per frame
@@ -59,17 +83,13 @@ public class GameManager : MonoBehaviour
 
         SpawnLogic();
     }
-
-    public void SpawnLogic()
+    
+    void FixedUpdate()
     {
-        if (spawnDelay <= Time.time)
-        {
-            inputObjectQueue.Add(CreateKey());
-            spawnDelay = Time.time + Random.Range(0.1f, 1f);
-        }
+        PointMovement();   
     }
 
-    void AttackPerformed(InputAction.CallbackContext context)
+    public void AttackPerformed(InputAction.CallbackContext context)
     {
         // will be a list of all keys pressed
         List<string> keysPressed = new List<string>();
@@ -142,7 +162,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    
+    public void SpawnLogic()
+    {
+        if (spawnDelay <= Time.time)
+        {
+            inputObjectQueue.Add(CreateKey());
+            spawnDelay = Time.time + Random.Range(0.1f, 1f);
+        }
+    }
     public GameObject CreateKey()
     {
         /*
@@ -169,7 +196,73 @@ public class GameManager : MonoBehaviour
 
         return clone;
     }
+    public string PickKey()
+    {
+        /*
+        Returns a key as a string
+        */
 
+        float selectedNum = Random.Range(0f, 1f);
+        float totalProbabilty = 0f;
+        // for each key, see if it was chosen
+        foreach (KeyInfo keyInfo in layout.keyInfos)
+        {
+            totalProbabilty += keyInfo.probabilty;
+            if (totalProbabilty >= selectedNum)
+            {
+                return keyInfo.key;
+            }
+        }
+
+        return null;
+    }
+
+    public void PickRandomTarget()
+    {
+        // get a random point with range to head towards
+        float targetX = Random.Range(-5.5f, 5.5f);
+        float targetY = Random.Range(-1f, 1f);
+        // get a vector from the current point pointing to the random point and target to that
+        targetVector = new Vector2(targetX - pointX, targetY - pointY);
+        // set target time to a number based on current game length(lower the longer) plus the current time
+        targetTime = 60 / ((Time.time - gameStartTime) / 10 + 1f) + Time.time;
+    }
+
+    public void PointMovement() // move the point that calculates key probabilty
+    {
+        // move the point
+        pointX += targetVector.x / targetTime / 50;
+        pointY += targetVector.y / targetTime / 50;
+        // change direction if it is time to do so
+        if (Time.time > targetTime)
+        {
+            PickRandomTarget();
+        }
+
+        // used for calculating probablity
+        float totalDistance = 0;
+
+        // for each keyInfo find their distance to the point, then add it to total
+        foreach (KeyInfo keyInfo in layout.keyInfos)
+        {
+            float keyX = keyInfo.xPos;
+            float keyY = keyInfo.yPos;
+
+            // get the distance to the point
+            Vector2 differenceVector = new Vector2 (pointX - keyX, pointY - keyY);
+            // set the distance found distance the power of 2 to increase chance keys in center are chosen.
+            // also invert it because other wise the further the key is the more likely, and we want the other way around
+            keyInfo.distance = 1 / differenceVector.magnitude;
+            
+            // add distance to total
+            totalDistance += keyInfo.distance;
+        }
+        // once again iterate through layout, this finding probabilty of each key
+        foreach (KeyInfo keyInfo in layout.keyInfos)
+        {
+            keyInfo.probabilty = keyInfo.distance / totalDistance;
+        }
+    }
 
     public void AlterPlayerValue(string valueId, float alterAmount)
     {
@@ -215,13 +308,5 @@ public class GameManager : MonoBehaviour
     {
         // instatiate a particle at the specified transform's position
         // this function asks for a transform and not a Vector2, becuase I forsee some partice effect requiring rotation
-    }
-
-    public string PickKey()
-    {
-        /*
-        Returns a key as a string
-        */
-        return tempKeys[Random.Range(0,tempKeys.Length)];
     }
 }
