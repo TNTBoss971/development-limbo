@@ -1,11 +1,8 @@
-using NUnit.Framework.Interfaces;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
-using UnityEngine.Windows;
-using static UnityEngine.GraphicsBuffer;
 public class GameManager : MonoBehaviour
 {
     [Header("Player Info")]
@@ -24,7 +21,8 @@ public class GameManager : MonoBehaviour
     public float targetTime; // not an AMOUNT of time but rather a POINT in time
     public float gameStartTime; // helps track how long gameplay has been running
 
-    public KeyLayout layout;
+    public GameObject keyLayoutObject;
+    public KeyObjectData[] keyObjectDatas;
 
 
     [Header("Scene Objects")]
@@ -50,6 +48,9 @@ public class GameManager : MonoBehaviour
         // define input actions
         attackAction = InputSystem.actions.FindAction("AttackInput");
         attackAction.performed += AttackPerformed;
+
+        // setup the layout with QWERTY
+        SetupLayout("QWERTY");
 
 
         gameStartTime = Time.time;
@@ -205,7 +206,7 @@ public class GameManager : MonoBehaviour
         float selectedNum = Random.Range(0f, 1f);
         float totalProbabilty = 0f;
         // for each key, see if it was chosen
-        foreach (KeyInfo keyInfo in layout.keyInfos)
+        foreach (KeyObjectData keyInfo in keyObjectDatas)
         {
             totalProbabilty += keyInfo.probabilty;
             if (totalProbabilty >= selectedNum)
@@ -243,22 +244,22 @@ public class GameManager : MonoBehaviour
         float totalDistance = 0;
 
         // for each keyInfo find their distance to the point, then add it to total
-        foreach (KeyInfo keyInfo in layout.keyInfos)
+        foreach (KeyObjectData keyInfo in keyObjectDatas)
         {
-            float keyX = keyInfo.xPos;
-            float keyY = keyInfo.yPos;
+            float keyX = keyInfo.transform.localPosition.x;
+            float keyY = keyInfo.transform.localPosition.y;
 
             // get the distance to the point
             Vector2 differenceVector = new Vector2 (pointX - keyX, pointY - keyY);
             // set the distance found distance the power of 2 to increase chance keys in center are chosen.
             // also invert it because other wise the further the key is the more likely, and we want the other way around
-            keyInfo.distance = 1 / differenceVector.magnitude;
+            keyInfo.distance = 1 / Mathf.Exp(differenceVector.magnitude);
             
             // add distance to total
             totalDistance += keyInfo.distance;
         }
         // once again iterate through layout, this finding probabilty of each key
-        foreach (KeyInfo keyInfo in layout.keyInfos)
+        foreach (KeyObjectData keyInfo in keyObjectDatas)
         {
             keyInfo.probabilty = keyInfo.distance / totalDistance;
         }
@@ -308,5 +309,37 @@ public class GameManager : MonoBehaviour
     {
         // instatiate a particle at the specified transform's position
         // this function asks for a transform and not a Vector2, becuase I forsee some partice effect requiring rotation
+    }
+
+    public void SetupLayout(string layout)
+    {
+        char[] layoutArray = null;
+        string layoutText = "";
+        if (layout == "QWERTY")
+        {
+            layoutText = "1234567890QWERTYUIOPASDFGHJKLZXCVBNM";
+            layoutArray = layoutText.ToCharArray();
+        }
+
+
+        // get all key objects in scene as an array
+        List<GameObject> keyObjects = keyLayoutObject.GetComponent<KeyLayoutData>().children;
+
+        int index = 0;
+        // iterate through that array, adding their KeyObjectData to the layout and setting it's key
+        foreach (GameObject keyObject in keyObjects)
+        {
+            KeyObjectData keyObjectData = keyObject.GetComponent<KeyObjectData>();
+            // add the key object to layout
+            keyObjectDatas.Append(keyObjectData);
+            // set the object's key
+            keyObjectData.key = layoutArray[index].ToString();
+            // send the all clear to the key object
+            keyObjectData.Setup();
+            index++;
+        }
+
+
+
     }
 }
