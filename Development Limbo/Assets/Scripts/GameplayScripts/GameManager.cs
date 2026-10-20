@@ -1,9 +1,11 @@
+using NUnit.Framework.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.Hierarchy;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.Windows;
+using static UnityEngine.GraphicsBuffer;
 public class GameManager : MonoBehaviour
 {
     [Header("Player Info")]
@@ -13,16 +15,28 @@ public class GameManager : MonoBehaviour
     [Header("Input Objects Info")]
     public List<GameObject> inputObjectQueue; // stores input objects in order of creation
     public GameObject targetedInput; // always the first object in inputObjectQueue
+    public float spawnDelay; // how long until the next input spawn
+
+    [Header("\"Drifting Point\" Logic")]
+    public float pointX;
+    public float pointY;
+    public Vector2 targetVector;
+    public float targetTime; // not an AMOUNT of time but rather a POINT in time
+    public float gameStartTime; // helps track how long gameplay has been running
+
+    public KeyLayout layout;
+
 
     [Header("Scene Objects")]
     public Transform inputObjectsParent;
     public Transform defendPoint;
+    public GameObject focusIndicator; // tells the player which input is first in queue
 
     [Header("Prefabs")]
     // needed prefabs
     public GameObject inputObjectPrefab; // the prefab for all spawned input objects
-    [Header("Input Actions")]
 
+    [Header("Input Actions")]
     public InputAction attackAction;
 
     [Header("TEMPORARY")]
@@ -32,18 +46,24 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        inputObjectQueue.Add(CreateKey());
-        inputObjectQueue.Add(CreateKey());
-        inputObjectQueue.Add(CreateKey());
-        for (int i = 0; i < 10; i++)
-        {
-            inputObjectQueue.Add(CreateKey());
-        }
 
         // define input actions
         attackAction = InputSystem.actions.FindAction("AttackInput");
         attackAction.performed += AttackPerformed;
+
+
+        gameStartTime = Time.time;
+        PickRandomTarget();
     }
+
+    /*
+    START:
+	    PICK_RANDOM_TARGET
+
+
+    FIXED_UPDATE:
+	    
+    */
 
 
     // Update is called once per frame
@@ -52,11 +72,24 @@ public class GameManager : MonoBehaviour
         // if the queue has an item in it, set the target input to the first item
         if (inputObjectQueue.Count > 0) {
             targetedInput = inputObjectQueue[0];
+            // set the focus indicator to the same position as the target
+            focusIndicator.transform.position = targetedInput.transform.position;
+        }
+        else
+        {
+            // move the focus indicator far away so it doesn't show up on screen
+            focusIndicator.transform.position = new Vector2 (100, 100);
         }
 
-        // get input actions
+        SpawnLogic();
     }
-    void AttackPerformed(InputAction.CallbackContext context)
+    
+    void FixedUpdate()
+    {
+        PointMovement();   
+    }
+
+    public void AttackPerformed(InputAction.CallbackContext context)
     {
         // will be a list of all keys pressed
         List<string> keysPressed = new List<string>();
@@ -111,6 +144,11 @@ public class GameManager : MonoBehaviour
                     // move the inputObjectQueue up so that there isn't null in the list
                     inputObjectQueue = inputObjectQueue.GetRange(1, inputObjectQueue.Count-1);
                 }
+                else
+                {
+                    inputObjectQueue = new List<GameObject>();
+                    targetedInput = null;
+                }
             }
             else
             {
@@ -121,6 +159,108 @@ public class GameManager : MonoBehaviour
                 CreateParticleEffect("incorrectInput", targetedInput.transform);
                 AlterPlayerValue("lives", -1);
             }
+        }
+    }
+
+    public void SpawnLogic()
+    {
+        if (spawnDelay <= Time.time)
+        {
+            inputObjectQueue.Add(CreateKey());
+            spawnDelay = Time.time + Random.Range(0.1f, 1f);
+        }
+    }
+    public GameObject CreateKey()
+    {
+        /*
+        This function returns a created Input GameObject
+        */
+        // clone the prefab
+        GameObject clone = Instantiate(inputObjectPrefab, inputObjectsParent);
+        // and assign its key
+        clone.GetComponent<InputObjectController>().assignedKey = PickKey();
+        // for now, set it a random position
+        clone.transform.position = new Vector2(Random.Range(-9,9), Random.Range(-5,5));
+
+        // circular positioning
+
+        // get a random degree from between 45 and 135, then convert to radians
+        float rot = Random.Range(45, 135) / 180f * Mathf.PI;
+        // get the direction as a vector
+        Vector2 rotAsVec = new Vector2(Mathf.Cos(rot), Mathf.Sin(rot));
+        // set the clone's starting position to the direction vector multiplied by starting distance offset by defendPoint's position
+        float startingDistance = 20f;
+        clone.transform.position = new Vector2 (rotAsVec.x * startingDistance + defendPoint.transform.position.x, rotAsVec.y * startingDistance + defendPoint.transform.position.y);
+        // set target to defend point
+        clone.GetComponent<InputObjectController>().target = defendPoint.transform;
+
+        return clone;
+    }
+    public string PickKey()
+    {
+        /*
+        Returns a key as a string
+        */
+
+        float selectedNum = Random.Range(0f, 1f);
+        float totalProbabilty = 0f;
+        // for each key, see if it was chosen
+        foreach (KeyInfo keyInfo in layout.keyInfos)
+        {
+            totalProbabilty += keyInfo.probabilty;
+            if (totalProbabilty >= selectedNum)
+            {
+                return keyInfo.key;
+            }
+        }
+
+        return null;
+    }
+
+    public void PickRandomTarget()
+    {
+        // get a random point with range to head towards
+        float targetX = Random.Range(-5.5f, 5.5f);
+        float targetY = Random.Range(-1f, 1f);
+        // get a vector from the current point pointing to the random point and target to that
+        targetVector = new Vector2(targetX - pointX, targetY - pointY);
+        // set target time to a number based on current game length(lower the longer) plus the current time
+        targetTime = 60 / ((Time.time - gameStartTime) / 10 + 1f) + Time.time;
+    }
+
+    public void PointMovement() // move the point that calculates key probabilty
+    {
+        // move the point
+        pointX += targetVector.x / targetTime / 50;
+        pointY += targetVector.y / targetTime / 50;
+        // change direction if it is time to do so
+        if (Time.time > targetTime)
+        {
+            PickRandomTarget();
+        }
+
+        // used for calculating probablity
+        float totalDistance = 0;
+
+        // for each keyInfo find their distance to the point, then add it to total
+        foreach (KeyInfo keyInfo in layout.keyInfos)
+        {
+            float keyX = keyInfo.xPos;
+            float keyY = keyInfo.yPos;
+
+            // get the distance to the point
+            Vector2 differenceVector = new Vector2 (pointX - keyX, pointY - keyY);
+            // set the distance found distance the power of 2 to increase chance keys in center are chosen.
+            // also invert it because other wise the further the key is the more likely, and we want the other way around
+            keyInfo.distance = 1 / differenceVector.magnitude;
+            
+            // add distance to total
+            totalDistance += keyInfo.distance;
+        }
+        // once again iterate through layout, this finding probabilty of each key
+        foreach (KeyInfo keyInfo in layout.keyInfos)
+        {
+            keyInfo.probabilty = keyInfo.distance / totalDistance;
         }
     }
 
@@ -148,45 +288,25 @@ public class GameManager : MonoBehaviour
                 // :( life is awful and everthing hurts. without my score, its just not worth it anymore
             }
         }
-    }
-
-    public GameObject CreateKey()
-    {
-        /*
-        This function returns a created Input GameObject
-        */
-        // clone the prefab
-        GameObject clone = Instantiate(inputObjectPrefab, inputObjectsParent);
-        // and assign its key
-        clone.GetComponent<InputObjectController>().assignedKey = PickKey();
-        // for now, set it a random position
-        clone.transform.position = new Vector2(Random.Range(-9,9), Random.Range(-5,5));
-
-        // circular positioning
-
-        // get a random degree from between 0 and 180, then convert to radians
-        float rot = Random.Range(0, 180) / 180f * Mathf.PI;
-        // get the direction as a vector
-        Vector2 rotAsVec = new Vector2(Mathf.Cos(rot), Mathf.Sin(rot));
-        // set the clone's starting position to the direction vector multiplied by starting distance offset by defendPoint's position
-        clone.transform.position = new Vector2 (rotAsVec.x * 10 + defendPoint.transform.position.x, rotAsVec.y * 10 + defendPoint.transform.position.y);
-        // set target to defend point
-        clone.GetComponent<InputObjectController>().target = defendPoint.transform;
-
-        return clone;
+        else if (valueId == "lives")
+        {
+            // alter the lives
+            playerLives += (int)alterAmount;
+            // then find the desired effect and play it
+            if (alterAmount > 0)
+            {
+                // unlikely we'll add a life gain mechanic, but here is it's spot if we do
+            }
+            else
+            {
+                // ouch
+            }
+        }
     }
 
     public void CreateParticleEffect(string particleId, Transform locationInfo)
     {
         // instatiate a particle at the specified transform's position
         // this function asks for a transform and not a Vector2, becuase I forsee some partice effect requiring rotation
-    }
-
-    public string PickKey()
-    {
-        /*
-        Returns a key as a string
-        */
-        return tempKeys[Random.Range(0,9)];
     }
 }
