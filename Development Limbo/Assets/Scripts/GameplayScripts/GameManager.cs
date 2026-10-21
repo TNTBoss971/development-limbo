@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.Rendering;
 public class GameManager : MonoBehaviour
 {
     [Header("Player Info")]
@@ -211,6 +212,7 @@ public class GameManager : MonoBehaviour
             totalProbabilty += keyInfo.probabilty;
             if (totalProbabilty >= selectedNum)
             {
+                Debug.Log("Key: " + keyInfo.key + " Prob: " + keyInfo.probabilty*100 + " Dist: " + keyInfo.distance + " ScalDist: " + keyInfo.scaledDistance);
                 return keyInfo.key;
             }
         }
@@ -226,7 +228,7 @@ public class GameManager : MonoBehaviour
         // get a vector from the current point pointing to the random point and target to that
         targetVector = new Vector2(targetX - pointX, targetY - pointY);
         // set target time to a number based on current game length(lower the longer) plus the current time
-        targetTime = 60 / ((Time.time - gameStartTime) / 10 + 1f) + Time.time;
+        targetTime = 60 / ((Time.time - gameStartTime) / 10 + 10f) + Time.time;
     }
 
     public void PointMovement() // move the point that calculates key probabilty
@@ -242,26 +244,25 @@ public class GameManager : MonoBehaviour
 
         // used for calculating probablity
         float totalDistance = 0;
-
         // for each keyInfo find their distance to the point, then add it to total
         foreach (KeyObjectData keyInfo in keyObjectDatas)
         {
-            float keyX = keyInfo.transform.localPosition.x;
-            float keyY = keyInfo.transform.localPosition.y;
+            //Debug.Log("Key at " + keyInfo.keyX + ", " + keyInfo.keyY);
 
             // get the distance to the point
-            Vector2 differenceVector = new Vector2 (pointX - keyX, pointY - keyY);
+            Vector2 differenceVector = new Vector2 (pointX - keyInfo.keyX, pointY - keyInfo.keyY);
             // set the distance found distance the power of 2 to increase chance keys in center are chosen.
             // also invert it because other wise the further the key is the more likely, and we want the other way around
-            keyInfo.distance = 1 / Mathf.Exp(differenceVector.magnitude);
+            keyInfo.distance = differenceVector.magnitude;
+            keyInfo.scaledDistance = 1 / Mathf.Pow(keyInfo.distance, 1.5f);
             
             // add distance to total
-            totalDistance += keyInfo.distance;
+            totalDistance += keyInfo.scaledDistance;
         }
         // once again iterate through layout, this finding probabilty of each key
         foreach (KeyObjectData keyInfo in keyObjectDatas)
         {
-            keyInfo.probabilty = keyInfo.distance / totalDistance;
+            keyInfo.probabilty = keyInfo.scaledDistance / totalDistance;
         }
     }
 
@@ -321,17 +322,18 @@ public class GameManager : MonoBehaviour
             layoutArray = layoutText.ToCharArray();
         }
 
-
+        // make sure that the keyLayoutObject is setup
+        keyLayoutObject.GetComponent<KeyLayoutData>().Setup();
         // get all key objects in scene as an array
         List<GameObject> keyObjects = keyLayoutObject.GetComponent<KeyLayoutData>().children;
-
         int index = 0;
         // iterate through that array, adding their KeyObjectData to the layout and setting it's key
         foreach (GameObject keyObject in keyObjects)
         {
             KeyObjectData keyObjectData = keyObject.GetComponent<KeyObjectData>();
             // add the key object to layout
-            keyObjectDatas.Append(keyObjectData);
+            // (I know a list would be easier, but I want to use an array becuase the length won't change after this function finishes)
+            keyObjectDatas = keyObjectDatas.Append(keyObjectData).ToArray();
             // set the object's key
             keyObjectData.key = layoutArray[index].ToString();
             // send the all clear to the key object
