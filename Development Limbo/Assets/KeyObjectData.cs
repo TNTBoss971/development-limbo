@@ -10,6 +10,9 @@ public class KeyObjectData : MonoBehaviour
 
     public float keyX;
     public float keyY;
+
+    public bool isIncluded; // is this Key Object close enough to matter?
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -23,7 +26,14 @@ public class KeyObjectData : MonoBehaviour
         keyY = transform.localPosition.y;
 
         SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        spriteRenderer.color = new Color(probabilty, probabilty, probabilty);
+        if (isIncluded)
+        {
+            spriteRenderer.color = Color.HSVToRGB(probabilty*0.9f, 1, 1);
+        }
+        else
+        {
+            spriteRenderer.color = Color.HSVToRGB(probabilty*0.9f, 1, 0.25f);
+        }
     }
     public void Setup() // called by the game manager when it is all clear to setup
     {

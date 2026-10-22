@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject keyLayoutObject;
     public KeyObjectData[] keyObjectDatas;
+    public float distanceCutoff;
 
 
     [Header("Scene Objects")]
@@ -209,11 +210,14 @@ public class GameManager : MonoBehaviour
         // for each key, see if it was chosen
         foreach (KeyObjectData keyInfo in keyObjectDatas)
         {
-            totalProbabilty += keyInfo.probabilty;
-            if (totalProbabilty >= selectedNum)
+            if (keyInfo.isIncluded)
             {
-                Debug.Log("Key: " + keyInfo.key + " Prob: " + keyInfo.probabilty*100 + " Dist: " + keyInfo.distance + " ScalDist: " + keyInfo.scaledDistance);
-                return keyInfo.key;
+                totalProbabilty += keyInfo.probabilty;
+                if (totalProbabilty >= selectedNum)
+                {
+                    Debug.Log("Key: " + keyInfo.key + " Prob: " + keyInfo.probabilty*100 + " Dist: " + keyInfo.distance + " ScalDist: " + keyInfo.scaledDistance);
+                    return keyInfo.key;
+                }
             }
         }
 
@@ -227,15 +231,16 @@ public class GameManager : MonoBehaviour
         float targetY = Random.Range(-1f, 1f);
         // get a vector from the current point pointing to the random point and target to that
         targetVector = new Vector2(targetX - pointX, targetY - pointY);
-        // set target time to a number based on current game length(lower the longer) plus the current time
-        targetTime = 60 / ((Time.time - gameStartTime) / 10 + 10f) + Time.time;
+        // NOPE OUTDATED LOL > set target time to a number based on current game length(lower the longer) plus the current time
+        //targetTime = 60 / ((Time.time - gameStartTime) / 10 + 10f) + Time.time;
+        targetTime = 10f + Time.time;
     }
 
     public void PointMovement() // move the point that calculates key probabilty
     {
-        // move the point
-        pointX += targetVector.x / targetTime / 50;
-        pointY += targetVector.y / targetTime / 50;
+        // move the point (target vector / total time alloted for this movement / number of times FixedUpdate fires in a second)
+        pointX += targetVector.x / 10 / 50;
+        pointY += targetVector.y / 10 / 50;
         // change direction if it is time to do so
         if (Time.time > targetTime)
         {
@@ -251,18 +256,36 @@ public class GameManager : MonoBehaviour
 
             // get the distance to the point
             Vector2 differenceVector = new Vector2 (pointX - keyInfo.keyX, pointY - keyInfo.keyY);
-            // set the distance found distance the power of 2 to increase chance keys in center are chosen.
-            // also invert it because other wise the further the key is the more likely, and we want the other way around
+
+            // set distance to the found distance
             keyInfo.distance = differenceVector.magnitude;
-            keyInfo.scaledDistance = 1 / Mathf.Pow(keyInfo.distance, 1.5f);
+            // invert it because otherwise the further the key is the more likely, and we want the other way around
+            // additionally, raise it an exponent to make the closer keys even more likely.
+            keyInfo.scaledDistance = 1 / Mathf.Pow(keyInfo.distance, 1.75f);
             
-            // add distance to total
-            totalDistance += keyInfo.scaledDistance;
+            // is the found scaled distance large enough that it actually matters
+            if (keyInfo.scaledDistance > distanceCutoff)
+            {
+                // add distance to total
+                totalDistance += keyInfo.scaledDistance;
+                // include
+                keyInfo.isIncluded = true;
+            }
+            else
+            {
+                // exclude
+                // loser
+                keyInfo.isIncluded = false;
+            }
         }
         // once again iterate through layout, this finding probabilty of each key
         foreach (KeyObjectData keyInfo in keyObjectDatas)
         {
-            keyInfo.probabilty = keyInfo.scaledDistance / totalDistance;
+            // do we actually care about the key this frame?
+            if (keyInfo.isIncluded)
+            {
+                keyInfo.probabilty = keyInfo.scaledDistance / totalDistance;
+            }
         }
     }
 
