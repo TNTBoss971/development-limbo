@@ -187,6 +187,7 @@ GameObject:
   - component: {fileID: 226358208265619259}
   - component: {fileID: 5400118099539492328}
   - component: {fileID: 7430769128203770282}
+  - component: {fileID: 9022331130843922105}
   m_Layer: 0
   m_Name: InputObject
   m_TagString: Untagged
@@ -281,3 +282,16 @@ MonoBehaviour:
   target: {fileID: 0}
   targetVector: {x: 0, y: 0}
   speed: 0.05
+--- !u!114 &9022331130843922105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9001752132567033070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9c360b824a511d4f81258467e461576, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1

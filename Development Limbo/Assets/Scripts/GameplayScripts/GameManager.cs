@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject keyLayoutObject;
     public KeyObjectData[] keyObjectDatas;
+    public float distanceScaleExponent;
     public float distanceCutoff;
 
 
@@ -31,6 +32,10 @@ public class GameManager : MonoBehaviour
     public Transform inputObjectsParent;
     public Transform defendPoint;
     public GameObject focusIndicator; // tells the player which input is first in queue
+
+    [Header("Managers")]
+    public ColorManager colorManager;
+
 
     [Header("Prefabs")]
     // needed prefabs
@@ -137,6 +142,8 @@ public class GameManager : MonoBehaviour
             {
                 // play a fun particle!! (THIS IS A JUICE HOUSEHOLD!!!)
                 CreateParticleEffect("inputObjectDestroyed", targetedInput.transform);
+                // swap color scheme
+                colorManager.ColorSwap();
                 // Lmao idiot dies to a key press (Destory the targetedInput)
                 Destroy(targetedInput);
                 AlterPlayerValue("score", 1);
@@ -227,8 +234,8 @@ public class GameManager : MonoBehaviour
     public void PickRandomTarget()
     {
         // get a random point with range to head towards
-        float targetX = Random.Range(-5.5f, 5.5f);
-        float targetY = Random.Range(-1f, 1f);
+        float targetX = Random.Range(-5.5f, 4f);
+        float targetY = Random.Range(-0.5f, 1f);
         // get a vector from the current point pointing to the random point and target to that
         targetVector = new Vector2(targetX - pointX, targetY - pointY);
         // NOPE OUTDATED LOL > set target time to a number based on current game length(lower the longer) plus the current time
@@ -261,7 +268,7 @@ public class GameManager : MonoBehaviour
             keyInfo.distance = differenceVector.magnitude;
             // invert it because otherwise the further the key is the more likely, and we want the other way around
             // additionally, raise it an exponent to make the closer keys even more likely.
-            keyInfo.scaledDistance = 1 / Mathf.Pow(keyInfo.distance, 1.75f);
+            keyInfo.scaledDistance = 1 / Mathf.Pow(keyInfo.distance, distanceScaleExponent);
             
             // is the found scaled distance large enough that it actually matters
             if (keyInfo.scaledDistance > distanceCutoff)

@@ -286,6 +286,57 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4573206239249855474, guid: 43904806090e87746846ba6512b28e6f, type: 3}
   m_PrefabInstance: {fileID: 1570749898}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &111898342
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 111898344}
+  - component: {fileID: 111898343}
+  m_Layer: 0
+  m_Name: ColorManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &111898343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 111898342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f34515b5025a1b34e9e2b5e6e1dcb5ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainColor0: {r: 0.14686084, g: 1, b: 0, a: 1}
+  backgroundColor0: {r: 0, g: 0, b: 0, a: 0}
+  mainColor1: {r: 1, g: 0, b: 0.8249526, a: 1}
+  backgroundColor1: {r: 0, g: 0, b: 0, a: 0}
+  activeColor: {r: 0, g: 0, b: 0, a: 0}
+  contrastingColor: {r: 0, g: 0, b: 0, a: 0}
+  hasSwapped: 0
+--- !u!4 &111898344
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 111898342}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -34.7946, y: -0.8116429, z: 0.8768451}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 357564705}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &141536961
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -856,7 +907,8 @@ Transform:
   m_LocalPosition: {x: -0.15318702, y: 1.0394427, z: 0.043947384}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 111898344}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &357564706
@@ -883,10 +935,12 @@ MonoBehaviour:
   gameStartTime: 0
   keyLayoutObject: {fileID: 1581605158}
   keyObjectDatas: []
+  distanceScaleExponent: 1
   distanceCutoff: 1
   inputObjectsParent: {fileID: 259155502}
   defendPoint: {fileID: 2101764899}
   focusIndicator: {fileID: 1239353424}
+  colorManager: {fileID: 111898343}
   inputObjectPrefab: {fileID: 9001752132567033070, guid: 9008cb2aa7722694eb3dae9885f97477, type: 3}
   attackAction:
     m_Name: Attack
@@ -1020,7 +1074,7 @@ GameObject:
   - component: {fileID: 416946064}
   - component: {fileID: 416946065}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: DriftingPointVisualizer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1035,7 +1089,7 @@ Transform:
   m_GameObject: {fileID: 416946063}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 4, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
