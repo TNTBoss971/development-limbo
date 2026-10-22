@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 14457591}
   - component: {fileID: 14457592}
+  - component: {fileID: 14457593}
   m_Layer: 0
   m_Name: Triangle (3)
   m_TagString: Untagged
@@ -206,6 +207,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &14457593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 14457590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9c360b824a511d4f81258467e461576, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
 --- !u!4 &33778008 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4573206239249855474, guid: 43904806090e87746846ba6512b28e6f, type: 3}
@@ -1787,6 +1801,7 @@ GameObject:
   m_Component:
   - component: {fileID: 841567293}
   - component: {fileID: 841567294}
+  - component: {fileID: 841567295}
   m_Layer: 0
   m_Name: Triangle (1)
   m_TagString: Untagged
@@ -1864,6 +1879,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &841567295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841567292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9c360b824a511d4f81258467e461576, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
 --- !u!1001 &844137773
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2186,6 +2214,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1073325531}
   - component: {fileID: 1073325532}
+  - component: {fileID: 1073325533}
   m_Layer: 0
   m_Name: Triangle
   m_TagString: Untagged
@@ -2263,6 +2292,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1073325533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073325530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9c360b824a511d4f81258467e461576, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
 --- !u!1001 &1079762109
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3511,6 +3553,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1916382635}
   - component: {fileID: 1916382636}
+  - component: {fileID: 1916382637}
   m_Layer: 0
   m_Name: Triangle (2)
   m_TagString: Untagged
@@ -3588,6 +3631,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1916382637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916382634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9c360b824a511d4f81258467e461576, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
 --- !u!4 &1945466679 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4573206239249855474, guid: 43904806090e87746846ba6512b28e6f, type: 3}
