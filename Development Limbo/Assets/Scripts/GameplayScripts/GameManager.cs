@@ -9,6 +9,9 @@ public class GameManager : MonoBehaviour
     [Header("Player Info")]
     public int playerLives; // stores how many misses the player has left
     public int playerScore = 0; // stores player score
+    public float playerAccuracy;
+    private int playerHits;
+    private int playerMisses;
 
     [Header("Input Objects Info")]
     public List<GameObject> inputObjectQueue; // stores input objects in order of creation
@@ -90,8 +93,28 @@ public class GameManager : MonoBehaviour
         }
 
         SpawnLogic();
+
+        AccuracyLogic();
     }
-    
+
+    public void SpawnLogic()
+    {
+        if (spawnDelay <= Time.time)
+        {
+            inputObjectQueue.Add(CreateKey());
+            spawnDelay = Time.time + Random.Range(0.1f, 1f);
+        }
+    }
+
+    public void AccuracyLogic()
+    {
+        /*
+         * This function's purpose is simply to calculate the player's current accuracy
+         * 
+         */
+        playerAccuracy = (float)playerHits / (playerHits + playerMisses);
+    }
+
     void FixedUpdate()
     {
         PointMovement();   
@@ -147,6 +170,7 @@ public class GameManager : MonoBehaviour
                 // Lmao idiot dies to a key press (Destory the targetedInput)
                 Destroy(targetedInput);
                 AlterPlayerValue("score", 1);
+                playerHits++;
 
                 // if the inputObjectQueue isn't empty (if it only has one item, then it would be the object we just destroyed)
                 if (inputObjectQueue.Count > 1)
@@ -168,18 +192,11 @@ public class GameManager : MonoBehaviour
 
                 CreateParticleEffect("incorrectInput", targetedInput.transform);
                 AlterPlayerValue("lives", -1);
+                playerMisses++;
             }
         }
     }
 
-    public void SpawnLogic()
-    {
-        if (spawnDelay <= Time.time)
-        {
-            inputObjectQueue.Add(CreateKey());
-            spawnDelay = Time.time + Random.Range(0.1f, 1f);
-        }
-    }
     public GameObject CreateKey()
     {
         /*
