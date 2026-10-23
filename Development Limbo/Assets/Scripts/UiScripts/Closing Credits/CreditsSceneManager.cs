@@ -9,7 +9,7 @@ public class CreditsSceneManager : MonoBehaviour
     [SerializeField] protected RectTransform _creditsContainer;
     [SerializeField] protected Image _fade;
     [SerializeField] protected float _finalLocation;
-    [SerializeField] protected float _scrollSpeed = 20f;
+    [SerializeField] protected float _scrollSpeed = 0.1f;
     [SerializeField] protected float _fadeSpeed = 1.5f;
     [SerializeField] protected float _fadeOutro = 3.5f;
 
