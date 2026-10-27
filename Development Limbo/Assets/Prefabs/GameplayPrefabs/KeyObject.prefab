@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4337462244953067572}
   - component: {fileID: 2049594647309819444}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4573206239249855474}
   - component: {fileID: 8852456101884361037}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: KeyObject
   m_TagString: KeyObject
   m_Icon: {fileID: 0}
@@ -135,7 +135,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   key: 
   distance: 0
+  scaledDistance: 0
   probabilty: 0
+  keyX: 0
+  keyY: 0
+  isIncluded: 0
 --- !u!1 &4964396870964720958
 GameObject:
   m_ObjectHideFlags: 0
@@ -147,7 +151,7 @@ GameObject:
   - component: {fileID: 4716247532970826752}
   - component: {fileID: 6315647511935168636}
   - component: {fileID: 1261361310874859137}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
