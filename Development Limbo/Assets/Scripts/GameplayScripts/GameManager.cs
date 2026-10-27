@@ -1,16 +1,17 @@
-using NUnit.Framework.Interfaces;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
-using UnityEngine.Windows;
-using static UnityEngine.GraphicsBuffer;
+using UnityEngine.Rendering;
 public class GameManager : MonoBehaviour
 {
     [Header("Player Info")]
     public int playerLives; // stores how many misses the player has left
     public int playerScore = 0; // stores player score
+    public float playerAccuracy;
+    private int playerHits;
+    private int playerMisses;
 
     [Header("Input Objects Info")]
     public List<GameObject> inputObjectQueue; // stores input objects in order of creation
@@ -24,13 +25,20 @@ public class GameManager : MonoBehaviour
     public float targetTime; // not an AMOUNT of time but rather a POINT in time
     public float gameStartTime; // helps track how long gameplay has been running
 
-    public KeyLayout layout;
+    public GameObject keyLayoutObject;
+    public KeyObjectData[] keyObjectDatas;
+    public float distanceScaleExponent;
+    public float distanceCutoff;
 
 
     [Header("Scene Objects")]
     public Transform inputObjectsParent;
     public Transform defendPoint;
     public GameObject focusIndicator; // tells the player which input is first in queue
+
+    [Header("Managers")]
+    public ColorManager colorManager;
+
 
     [Header("Prefabs")]
     // needed prefabs
@@ -50,6 +58,9 @@ public class GameManager : MonoBehaviour
         // define input actions
         attackAction = InputSystem.actions.FindAction("AttackInput");
         attackAction.performed += AttackPerformed;
+
+        // setup the layout with QWERTY
+        SetupLayout("QWERTY");
 
 
         gameStartTime = Time.time;
@@ -82,8 +93,28 @@ public class GameManager : MonoBehaviour
         }
 
         SpawnLogic();
+
+        AccuracyLogic();
     }
-    
+
+    public void SpawnLogic()
+    {
+        if (spawnDelay <= Time.time)
+        {
+            inputObjectQueue.Add(CreateKey());
+            spawnDelay = Time.time + Random.Range(0.1f, 1f);
+        }
+    }
+
+    public void AccuracyLogic()
+    {
+        /*
+         * This function's purpose is simply to calculate the player's current accuracy
+         * 
+         */
+        playerAccuracy = (float)playerHits / (playerHits + playerMisses);
+    }
+
     void FixedUpdate()
     {
         PointMovement();   
@@ -134,9 +165,12 @@ public class GameManager : MonoBehaviour
             {
                 // play a fun particle!! (THIS IS A JUICE HOUSEHOLD!!!)
                 CreateParticleEffect("inputObjectDestroyed", targetedInput.transform);
+                // swap color scheme
+                colorManager.ColorSwap();
                 // Lmao idiot dies to a key press (Destory the targetedInput)
                 Destroy(targetedInput);
                 AlterPlayerValue("score", 1);
+                playerHits++;
 
                 // if the inputObjectQueue isn't empty (if it only has one item, then it would be the object we just destroyed)
                 if (inputObjectQueue.Count > 1)
@@ -158,18 +192,11 @@ public class GameManager : MonoBehaviour
 
                 CreateParticleEffect("incorrectInput", targetedInput.transform);
                 AlterPlayerValue("lives", -1);
+                playerMisses++;
             }
         }
     }
 
-    public void SpawnLogic()
-    {
-        if (spawnDelay <= Time.time)
-        {
-            inputObjectQueue.Add(CreateKey());
-            spawnDelay = Time.time + Random.Range(0.1f, 1f);
-        }
-    }
     public GameObject CreateKey()
     {
         /*
@@ -205,12 +232,16 @@ public class GameManager : MonoBehaviour
         float selectedNum = Random.Range(0f, 1f);
         float totalProbabilty = 0f;
         // for each key, see if it was chosen
-        foreach (KeyInfo keyInfo in layout.keyInfos)
+        foreach (KeyObjectData keyInfo in keyObjectDatas)
         {
-            totalProbabilty += keyInfo.probabilty;
-            if (totalProbabilty >= selectedNum)
+            if (keyInfo.isIncluded)
             {
-                return keyInfo.key;
+                totalProbabilty += keyInfo.probabilty;
+                if (totalProbabilty >= selectedNum)
+                {
+                    Debug.Log("Key: " + keyInfo.key + " Prob: " + keyInfo.probabilty*100 + " Dist: " + keyInfo.distance + " ScalDist: " + keyInfo.scaledDistance);
+                    return keyInfo.key;
+                }
             }
         }
 
@@ -220,19 +251,20 @@ public class GameManager : MonoBehaviour
     public void PickRandomTarget()
     {
         // get a random point with range to head towards
-        float targetX = Random.Range(-5.5f, 5.5f);
-        float targetY = Random.Range(-1f, 1f);
+        float targetX = Random.Range(-5.5f, 4f);
+        float targetY = Random.Range(-0.5f, 1f);
         // get a vector from the current point pointing to the random point and target to that
         targetVector = new Vector2(targetX - pointX, targetY - pointY);
-        // set target time to a number based on current game length(lower the longer) plus the current time
-        targetTime = 60 / ((Time.time - gameStartTime) / 10 + 1f) + Time.time;
+        // NOPE OUTDATED LOL > set target time to a number based on current game length(lower the longer) plus the current time
+        //targetTime = 60 / ((Time.time - gameStartTime) / 10 + 10f) + Time.time;
+        targetTime = 10f + Time.time;
     }
 
     public void PointMovement() // move the point that calculates key probabilty
     {
-        // move the point
-        pointX += targetVector.x / targetTime / 50;
-        pointY += targetVector.y / targetTime / 50;
+        // move the point (target vector / total time alloted for this movement / number of times FixedUpdate fires in a second)
+        pointX += targetVector.x / 10 / 50;
+        pointY += targetVector.y / 10 / 50;
         // change direction if it is time to do so
         if (Time.time > targetTime)
         {
@@ -241,26 +273,43 @@ public class GameManager : MonoBehaviour
 
         // used for calculating probablity
         float totalDistance = 0;
-
         // for each keyInfo find their distance to the point, then add it to total
-        foreach (KeyInfo keyInfo in layout.keyInfos)
+        foreach (KeyObjectData keyInfo in keyObjectDatas)
         {
-            float keyX = keyInfo.xPos;
-            float keyY = keyInfo.yPos;
+            //Debug.Log("Key at " + keyInfo.keyX + ", " + keyInfo.keyY);
 
             // get the distance to the point
-            Vector2 differenceVector = new Vector2 (pointX - keyX, pointY - keyY);
-            // set the distance found distance the power of 2 to increase chance keys in center are chosen.
-            // also invert it because other wise the further the key is the more likely, and we want the other way around
-            keyInfo.distance = 1 / differenceVector.magnitude;
+            Vector2 differenceVector = new Vector2 (pointX - keyInfo.keyX, pointY - keyInfo.keyY);
+
+            // set distance to the found distance
+            keyInfo.distance = differenceVector.magnitude;
+            // invert it because otherwise the further the key is the more likely, and we want the other way around
+            // additionally, raise it an exponent to make the closer keys even more likely.
+            keyInfo.scaledDistance = 1 / Mathf.Pow(keyInfo.distance, distanceScaleExponent);
             
-            // add distance to total
-            totalDistance += keyInfo.distance;
+            // is the found scaled distance large enough that it actually matters
+            if (keyInfo.scaledDistance > distanceCutoff)
+            {
+                // add distance to total
+                totalDistance += keyInfo.scaledDistance;
+                // include
+                keyInfo.isIncluded = true;
+            }
+            else
+            {
+                // exclude
+                // loser
+                keyInfo.isIncluded = false;
+            }
         }
         // once again iterate through layout, this finding probabilty of each key
-        foreach (KeyInfo keyInfo in layout.keyInfos)
+        foreach (KeyObjectData keyInfo in keyObjectDatas)
         {
-            keyInfo.probabilty = keyInfo.distance / totalDistance;
+            // do we actually care about the key this frame?
+            if (keyInfo.isIncluded)
+            {
+                keyInfo.probabilty = keyInfo.scaledDistance / totalDistance;
+            }
         }
     }
 
@@ -308,5 +357,38 @@ public class GameManager : MonoBehaviour
     {
         // instatiate a particle at the specified transform's position
         // this function asks for a transform and not a Vector2, becuase I forsee some partice effect requiring rotation
+    }
+
+    public void SetupLayout(string layout)
+    {
+        char[] layoutArray = null;
+        string layoutText = "";
+        if (layout == "QWERTY")
+        {
+            layoutText = "1234567890QWERTYUIOPASDFGHJKLZXCVBNM";
+            layoutArray = layoutText.ToCharArray();
+        }
+
+        // make sure that the keyLayoutObject is setup
+        keyLayoutObject.GetComponent<KeyLayoutData>().Setup();
+        // get all key objects in scene as an array
+        List<GameObject> keyObjects = keyLayoutObject.GetComponent<KeyLayoutData>().children;
+        int index = 0;
+        // iterate through that array, adding their KeyObjectData to the layout and setting it's key
+        foreach (GameObject keyObject in keyObjects)
+        {
+            KeyObjectData keyObjectData = keyObject.GetComponent<KeyObjectData>();
+            // add the key object to layout
+            // (I know a list would be easier, but I want to use an array becuase the length won't change after this function finishes)
+            keyObjectDatas = keyObjectDatas.Append(keyObjectData).ToArray();
+            // set the object's key
+            keyObjectData.key = layoutArray[index].ToString();
+            // send the all clear to the key object
+            keyObjectData.Setup();
+            index++;
+        }
+
+
+
     }
 }
