@@ -8,14 +8,14 @@ public class ColorManager : MonoBehaviour
     public Color backgroundColor1;
 
     public Color activeColor;
-    public Color contrastingColor;
+    public Color activeBackgroundColor;
     public bool hasSwapped;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         activeColor = mainColor0;
-        contrastingColor = mainColor1;
+        activeBackgroundColor = backgroundColor0;
     }
 
     // Update is called once per frame
@@ -28,12 +28,12 @@ public class ColorManager : MonoBehaviour
         if (hasSwapped)
         {
             activeColor = mainColor0;
-            contrastingColor = mainColor1;
+            activeBackgroundColor = backgroundColor0;
         }
         else
         {
             activeColor = mainColor1;
-            contrastingColor = mainColor0;
+            activeBackgroundColor = backgroundColor1;
         }
         // invert hasSwapped
         hasSwapped = !hasSwapped;

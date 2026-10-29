@@ -37,9 +37,7 @@ public class ValueDisplayer : MonoBehaviour
         // accuracy
         if (value == DisplayValue.Accuracy)
         {
-            valueString = gameManager.playerAccuracy.ToString();
-            // remove the leading 0.
-            valueString = valueString.Substring(2, valueString.Length-1);
+            valueString = (gameManager.playerAccuracy*100).ToString();
         }
         // lives
         if (value == DisplayValue.Lives)
@@ -55,11 +53,20 @@ public class ValueDisplayer : MonoBehaviour
         // find first portion
         string displayText = templateString.Split('#')[0];
 
+        if (addZerosAtEnd)
+        {
+            displayText += valueString;
+        }
+
         for (int i = 0; i < valueCharacterCount - valueString.Length; i++)
         {
             displayText += "0";
         }
-        displayText += valueString;
+
+        if (!addZerosAtEnd)
+        {
+            displayText += valueString;
+        }
         textMeshPro.text = displayText;
     }
 }
