@@ -4,12 +4,12 @@ public class Icon : MonoBehaviour
 {
     public string message;
 
-    private void OnMouseEnter()
+    public void OnMouseEnter()
     {
         IconName._instance.ShowDisplay(message);
     }
 
-    private void OnMouseExit()
+    public void OnMouseExit()
     {
         IconName._instance.HideDisplay();
     }
