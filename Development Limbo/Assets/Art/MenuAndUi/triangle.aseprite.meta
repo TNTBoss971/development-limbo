@@ -153,9 +153,9 @@ ScriptedImporter:
       serializedVersion: 2
       x: 4
       y: 44
-      width: 15
-      height: 15
-    spriteID: 172c7dd82ea03aa44997be4ee03abea1
+      width: 26
+      height: 26
+    spriteID: ca98644dd4c102f4a91100768a2a9e95
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -186,11 +186,11 @@ ScriptedImporter:
       frameIndex: 1
       additiveSortOrder: 0
       cellRect:
-        x: 8
-        y: 9
-        width: 15
-        height: 15
-      spriteId: 172c7dd82ea03aa44997be4ee03abea1
+        x: 3
+        y: 3
+        width: 26
+        height: 26
+      spriteId: ca98644dd4c102f4a91100768a2a9e95
     linkedCells: []
     parentIndex: -1
   platformSettings:

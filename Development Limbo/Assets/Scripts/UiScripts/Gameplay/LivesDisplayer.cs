@@ -8,6 +8,7 @@ public class LivesDisplayer : MonoBehaviour
     public GameObject lifePrefab;
     public GameObject[] activeLifeObjects;
     public int maxLives;
+    public float distance;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -19,7 +20,7 @@ public class LivesDisplayer : MonoBehaviour
         {
             GameObject lifeClone = Instantiate(lifePrefab, gameObject.transform);
             // position the object appropriately
-            lifeClone.transform.localPosition = new Vector2(i * 30, 0);
+            lifeClone.transform.localPosition = new Vector2(i * distance, 0);
             
             activeLifeObjects[i] = lifeClone;
         }

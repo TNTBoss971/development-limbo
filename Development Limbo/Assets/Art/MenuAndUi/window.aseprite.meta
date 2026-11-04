@@ -82,7 +82,7 @@ ScriptedImporter:
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
-    addShadowCasters: 0
+    addShadowCasters: 1
   asepriteImporterSettings:
     fileImportMode: 1
     importHiddenLayers: 0
@@ -95,9 +95,9 @@ ScriptedImporter:
     generateModelPrefab: 1
     generateAnimationClips: 1
     addSortingGroup: 1
-    addShadowCasters: 0
+    addShadowCasters: 1
   importFileNodeState: 1
-  platformSettingsDirtyTick: 639283548456730648
+  platformSettingsDirtyTick: 639290687898642762
   textureAssetName: 
   singleSpriteImportData:
   - name: 
@@ -126,7 +126,7 @@ ScriptedImporter:
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 9
-    border: {x: 16, y: 16, z: 16, w: 16}
+    border: {x: 19, y: 19, z: 19, w: 19}
     customData: 
     rect:
       serializedVersion: 2
