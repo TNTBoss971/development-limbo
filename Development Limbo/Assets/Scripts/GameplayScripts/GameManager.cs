@@ -14,9 +14,7 @@ public class GameManager : MonoBehaviour
     private int playerMisses;
 
     [Header("Input Objects Info")]
-    public List<GameObject> inputObjectQueue; // stores input objects in order of creation
     public GameObject targetedInput; // always the first object in inputObjectQueue
-    public float spawnDelay; // how long until the next input spawn
 
     [Header("\"Drifting Point\" Logic")]
     public float pointX;
@@ -32,17 +30,13 @@ public class GameManager : MonoBehaviour
 
 
     [Header("Scene Objects")]
-    public Transform inputObjectsParent;
-    public Transform defendPoint;
     public GameObject focusIndicator; // tells the player which input is first in queue
+    private InputObjectManager inputObjectManager;
 
     [Header("Managers")]
     public ColorManager colorManager;
 
-
     [Header("Prefabs")]
-    // needed prefabs
-    public GameObject inputObjectPrefab; // the prefab for all spawned input objects
 
     [Header("Input Actions")]
     public InputAction attackAction;
@@ -54,6 +48,7 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        inputObjectManager = GetComponentInChildren<InputObjectManager>();
 
         // define input actions
         attackAction = InputSystem.actions.FindAction("AttackInput");
@@ -81,8 +76,8 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         // if the queue has an item in it, set the target input to the first item
-        if (inputObjectQueue.Count > 0) {
-            targetedInput = inputObjectQueue[0];
+        if (inputObjectManager.targetedInput) {
+            targetedInput = inputObjectManager.targetedInput;
             // set the focus indicator to the same position as the target
             focusIndicator.transform.position = targetedInput.transform.position;
         }
@@ -92,19 +87,9 @@ public class GameManager : MonoBehaviour
             focusIndicator.transform.position = new Vector2 (100, 100);
         }
 
-        SpawnLogic();
-
         AccuracyLogic();
     }
 
-    public void SpawnLogic()
-    {
-        if (spawnDelay <= Time.time)
-        {
-            inputObjectQueue.Add(CreateKey());
-            spawnDelay = Time.time + Random.Range(0.1f, 1f);
-        }
-    }
 
     public void AccuracyLogic()
     {
@@ -173,16 +158,7 @@ public class GameManager : MonoBehaviour
                 playerHits++;
 
                 // if the inputObjectQueue isn't empty (if it only has one item, then it would be the object we just destroyed)
-                if (inputObjectQueue.Count > 1)
-                {
-                    // move the inputObjectQueue up so that there isn't null in the list
-                    inputObjectQueue = inputObjectQueue.GetRange(1, inputObjectQueue.Count-1);
-                }
-                else
-                {
-                    inputObjectQueue = new List<GameObject>();
-                    targetedInput = null;
-                }
+                inputObjectManager.ShiftQueue();
             }
             else
             {
@@ -197,32 +173,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public GameObject CreateKey()
-    {
-        /*
-        This function returns a created Input GameObject
-        */
-        // clone the prefab
-        GameObject clone = Instantiate(inputObjectPrefab, inputObjectsParent);
-        // and assign its key
-        clone.GetComponent<InputObjectController>().assignedKey = PickKey();
-        // for now, set it a random position
-        clone.transform.position = new Vector2(Random.Range(-9,9), Random.Range(-5,5));
-
-        // circular positioning
-
-        // get a random degree from between 45 and 135, then convert to radians
-        float rot = Random.Range(45, 135) / 180f * Mathf.PI;
-        // get the direction as a vector
-        Vector2 rotAsVec = new Vector2(Mathf.Cos(rot), Mathf.Sin(rot));
-        // set the clone's starting position to the direction vector multiplied by starting distance offset by defendPoint's position
-        float startingDistance = 20f;
-        clone.transform.position = new Vector2 (rotAsVec.x * startingDistance + defendPoint.transform.position.x, rotAsVec.y * startingDistance + defendPoint.transform.position.y);
-        // set target to defend point
-        clone.GetComponent<InputObjectController>().target = defendPoint.transform;
-
-        return clone;
-    }
     public string PickKey()
     {
         /*

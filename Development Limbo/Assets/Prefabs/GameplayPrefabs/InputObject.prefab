@@ -295,8 +295,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedKey: 
   target: {fileID: 0}
-  targetVector: {x: 0, y: 0}
-  speed: 0.05
+  startPosition: {x: 0, y: 0}
+  startTime: 0
+  passedTime: 0
+  travelVector: {x: 0, y: 0}
+  travelTime: 10
 --- !u!114 &9022331130843922105
 MonoBehaviour:
   m_ObjectHideFlags: 0
