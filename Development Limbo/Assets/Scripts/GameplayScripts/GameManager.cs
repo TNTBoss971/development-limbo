@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
     [Header("Scene Objects")]
     public GameObject focusIndicator; // tells the player which input is first in queue
     private InputObjectManager inputObjectManager;
+    public StateManager stateManager;
 
     [Header("Managers")]
     public ColorManager colorManager;
@@ -49,6 +50,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         inputObjectManager = GetComponentInChildren<InputObjectManager>();
+        stateManager = GetComponentInParent<StateManager>();
 
         // define input actions
         attackAction = InputSystem.actions.FindAction("AttackInput");
@@ -75,19 +77,23 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // if the queue has an item in it, set the target input to the first item
-        if (inputObjectManager.targetedInput) {
-            targetedInput = inputObjectManager.targetedInput;
-            // set the focus indicator to the same position as the target
-            focusIndicator.transform.position = targetedInput.transform.position;
-        }
-        else
+        if (stateManager.currentState == StateManager.State.Gameplay)
         {
-            // move the focus indicator far away so it doesn't show up on screen
-            focusIndicator.transform.position = new Vector2 (100, 100);
-        }
+            // if the queue has an item in it, set the target input to the first item
+            if (inputObjectManager.targetedInput)
+            {
+                targetedInput = inputObjectManager.targetedInput;
+                // set the focus indicator to the same position as the target
+                focusIndicator.transform.position = targetedInput.transform.position;
+            }
+            else
+            {
+                // move the focus indicator far away so it doesn't show up on screen
+                focusIndicator.transform.position = new Vector2(100, 100);
+            }
 
-        AccuracyLogic();
+            AccuracyLogic();
+        }
     }
 
 

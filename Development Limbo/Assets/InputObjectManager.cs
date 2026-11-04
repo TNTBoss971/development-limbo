@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 public class InputObjectManager : MonoBehaviour
 {
     private GameManager gameManager;
+    private StateManager stateManager;
     public Transform defendPoint;
     public Transform inputObjectsParent;
 
@@ -25,20 +26,27 @@ public class InputObjectManager : MonoBehaviour
     void Start()
     {
         gameManager = GetComponentInParent<GameManager>();
+
+        stateManager = gameManager.stateManager;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (inputObjectQueue.Count > 0) {
-            targetedInput = inputObjectQueue[0];
-        }
-        else
-        {
-            targetedInput = null;
-        }        
 
-        SpawnLogic();
+        if (stateManager.currentState == StateManager.State.Gameplay)
+        {
+            if (inputObjectQueue.Count > 0)
+            {
+                targetedInput = inputObjectQueue[0];
+            }
+            else
+            {
+                targetedInput = null;
+            }
+
+            SpawnLogic();
+        }
     }
     public void SpawnLogic()
     {
