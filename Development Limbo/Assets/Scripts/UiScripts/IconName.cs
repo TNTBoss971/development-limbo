@@ -44,16 +44,4 @@ public class IconName : MonoBehaviour
         gameObject.SetActive(false);
         _textComponent.text = string.Empty;
     }
-
-    public string message;
-
-    private void OnMouseEnter()
-    {
-        ShowDisplay(message);
-    }
-
-    private void OnMouseExit()
-    {
-        HideDisplay();
-    }
 }
