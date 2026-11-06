@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class LivesDisplayer : MonoBehaviour
@@ -7,6 +9,8 @@ public class LivesDisplayer : MonoBehaviour
     public GameManager gameManager; 
     public GameObject lifePrefab;
     public GameObject[] activeLifeObjects;
+    public GameObject[] activeShieldObjects;
+    public int lostShields;
     public int maxLives;
     public float distance;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -43,5 +47,26 @@ public class LivesDisplayer : MonoBehaviour
                 activeLifeObjects[i].SetActive(false);
             }
         }
+
+        // for all active shields
+        for (int i = 0; i < activeShieldObjects.Length; i++)
+        {
+            // position the object appropriately
+            activeShieldObjects[i].transform.localPosition = new Vector2((i+gameManager.playerLives) * distance, 0);
+
+            // check if this shield is lost
+            if (i <= i - lostShields)
+            {
+                // if it isn't, set active
+                activeShieldObjects[i].SetActive(true);
+            }
+            else
+            {
+                // if it is, set inactive
+                activeShieldObjects[i].SetActive(false);
+            }
+        }
     }
+
+
 }

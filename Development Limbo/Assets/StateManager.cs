@@ -33,4 +33,21 @@ public class StateManager : MonoBehaviour
             cam.cullingMask = gameplayLayers;
         }
     }
+
+
+    [ContextMenu("Enter Gameplay State")]
+    public void DebugEnterGameplayAction()
+    {
+        ActivateState(State.Gameplay);
+    }
+    [ContextMenu("Enter Main Menu State")]
+    public void DebugEnterMainMenuAction()
+    {
+        ActivateState(State.MainMenu);
+    }
+
+    public void ActivateState(State targetState)
+    {
+        currentState = targetState;
+    }
 }

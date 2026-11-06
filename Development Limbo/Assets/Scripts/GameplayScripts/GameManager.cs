@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.UI;
 public class GameManager : MonoBehaviour
 {
     [Header("Player Info")]
@@ -12,6 +13,13 @@ public class GameManager : MonoBehaviour
     public float playerAccuracy;
     private int playerHits;
     private int playerMisses;
+
+    public int playerStreak; // input streak
+
+    // shields
+    public int playerPermaShieldsMax; // number of permanent shields to limit regen
+    public int playerPermaShields; // number of perma shields
+    public int playerTempShields; // number of temp shields
 
     [Header("Input Objects Info")]
     public GameObject targetedInput; // always the first object in inputObjectQueue
@@ -160,8 +168,11 @@ public class GameManager : MonoBehaviour
                 colorManager.ColorSwap();
                 // Lmao idiot dies to a key press (Destory the targetedInput)
                 Destroy(targetedInput);
-                AlterPlayerValue("score", 1);
+                // alter all relevent values
                 playerHits++;
+                playerStreak++;
+                // play all relevent effects;
+                AlterPlayerValue("score", 1);
 
                 // if the inputObjectQueue isn't empty (if it only has one item, then it would be the object we just destroyed)
                 inputObjectManager.ShiftQueue();
@@ -173,7 +184,17 @@ public class GameManager : MonoBehaviour
                 // maybe change the color pallet to red/some other hostile color?
 
                 CreateParticleEffect("incorrectInput", targetedInput.transform);
-                AlterPlayerValue("lives", -1);
+
+                // if the player has no more shields left
+                if (playerPermaShields + playerTempShields == 0)
+                {
+                    // lower thier lives by one
+                    AlterPlayerValue("lives", -1);
+                }
+                else
+                {
+                    AlterPlayerValue("shields", -1);
+                }
                 playerMisses++;
             }
         }
@@ -304,6 +325,33 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                // ouch
+            }
+        }
+        else if (valueId == "shields")
+        {
+            if (alterAmount > 0)
+            {
+                // increase shields
+
+                // you're on fire dude! keep that streak up!
+            }
+            else
+            {
+                // decrease shields
+
+                // if the player has temp shields
+                if (playerTempShields > 0)
+                {
+                    // alter the tempShield count
+                    playerTempShields += (int)alterAmount;
+                }
+                else
+                {
+                    // alter the permaShield count
+                    playerPermaShields += (int)alterAmount;
+                }
+
                 // ouch
             }
         }
