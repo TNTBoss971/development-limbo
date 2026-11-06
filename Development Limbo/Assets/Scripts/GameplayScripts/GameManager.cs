@@ -17,9 +17,11 @@ public class GameManager : MonoBehaviour
     public int playerStreak; // input streak
 
     // shields
-    public int playerPermaShieldsMax; // number of permanent shields to limit regen
-    public int playerPermaShields; // number of perma shields
-    public int playerTempShields; // number of temp shields
+    public int playerMaxShields; // max number of shields to limit regen
+    public int playerShields; // number of current shields
+
+    public float shieldRegenTime; // the time stamp at which a shield regens
+    public float shieldRegenLength; // how long it takes to regen a shield in seconds
 
     [Header("Input Objects Info")]
     public GameObject targetedInput; // always the first object in inputObjectQueue
@@ -101,6 +103,7 @@ public class GameManager : MonoBehaviour
             }
 
             AccuracyLogic();
+            ShieldLogic();
         }
     }
 
@@ -112,6 +115,18 @@ public class GameManager : MonoBehaviour
          * 
          */
         playerAccuracy = (float)playerHits / (playerHits + playerMisses);
+    }
+
+    public void ShieldLogic()
+    {
+        if (playerShields < playerMaxShields)
+        {
+            if (shieldRegenTime <= Time.time)
+            {
+                shieldRegenTime = Time.time + shieldRegenLength;
+                AlterPlayerValue("shields", 1);
+            }
+        }
     }
 
     void FixedUpdate()
@@ -171,6 +186,7 @@ public class GameManager : MonoBehaviour
                 // alter all relevent values
                 playerHits++;
                 playerStreak++;
+                shieldRegenTime -= 1f; // reduce the time for shield regen by 1 second
                 // play all relevent effects;
                 AlterPlayerValue("score", 1);
 
@@ -186,7 +202,7 @@ public class GameManager : MonoBehaviour
                 CreateParticleEffect("incorrectInput", targetedInput.transform);
 
                 // if the player has no more shields left
-                if (playerPermaShields + playerTempShields == 0)
+                if (playerShields == 0)
                 {
                     // lower thier lives by one
                     AlterPlayerValue("lives", -1);
@@ -326,33 +342,26 @@ public class GameManager : MonoBehaviour
             else
             {
                 // ouch
+
+                if (playerLives <= 0)
+                {
+                    stateManager.ActivateState(StateManager.State.MainMenu);
+                }
             }
         }
         else if (valueId == "shields")
         {
+            // alter the current Shield count
+            playerShields += (int)alterAmount;
+
+            // then find the desired effect and play it
             if (alterAmount > 0)
             {
-                // increase shields
-
                 // you're on fire dude! keep that streak up!
             }
             else
             {
-                // decrease shields
-
-                // if the player has temp shields
-                if (playerTempShields > 0)
-                {
-                    // alter the tempShield count
-                    playerTempShields += (int)alterAmount;
-                }
-                else
-                {
-                    // alter the permaShield count
-                    playerPermaShields += (int)alterAmount;
-                }
-
-                // ouch
+                // ouch, but less becuase it was blocked
             }
         }
     }

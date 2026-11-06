@@ -10,7 +10,6 @@ public class LivesDisplayer : MonoBehaviour
     public GameObject lifePrefab;
     public GameObject[] activeLifeObjects;
     public GameObject[] activeShieldObjects;
-    public int lostShields;
     public int maxLives;
     public float distance;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -55,7 +54,7 @@ public class LivesDisplayer : MonoBehaviour
             activeShieldObjects[i].transform.localPosition = new Vector2((i+gameManager.playerLives) * distance, 0);
 
             // check if this shield is lost
-            if (i <= i - lostShields)
+            if (i <= gameManager.playerShields-1)
             {
                 // if it isn't, set active
                 activeShieldObjects[i].SetActive(true);
