@@ -10,6 +10,9 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] protected Image _fadeBg = null;
     [SerializeField] protected float _fadeSpeed = 1.5f;
 
+    // Public Variables
+    public StateManager _stateManager;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected void Start()
     {
@@ -97,13 +100,15 @@ public class MainMenuManager : MonoBehaviour
 
 
 
+
+
     // Button Functions: These are called after the fade is complete. Loads the new scene.
 
 
     public void LoadGame()
     {
         // Loads the new scene after the fade out is complete.
-        SceneManager.LoadScene("Gameplay");
+        _stateManager.ActivateState(StateManager.State.Gameplay);
     }
 
     public void CreditsScene()
