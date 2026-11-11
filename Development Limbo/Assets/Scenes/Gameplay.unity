@@ -158,7 +158,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 106.74072, y: 32.0058}
+  m_AnchoredPosition: {x: 110.2, y: 30.3}
   m_SizeDelta: {x: 12, y: 12}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &178510
@@ -1111,6 +1111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fadeBg: {fileID: 1665683343}
   _fadeSpeed: 1.5
+  _scalablePanel: {fileID: 0}
   _stateManager: {fileID: 0}
 --- !u!1001 &170906529
 PrefabInstance:
@@ -1415,7 +1416,7 @@ RectTransform:
   m_GameObject: {fileID: 187534482}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 9.554}
-  m_LocalScale: {x: 0.0060480144, y: 0.0060480144, z: 0.0060480144}
+  m_LocalScale: {x: 0.0047115847, y: 0.0047115847, z: 0.0047115847}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 275594669}
@@ -1427,7 +1428,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -556.2963, y: -252.96747}
+  m_AnchoredPosition: {x: -556.322, y: -252.939}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &190741606
@@ -2289,7 +2290,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -37, y: 122}
+  m_AnchoredPosition: {x: -37, y: 122.5}
   m_SizeDelta: {x: 12, y: 12}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &275594670
@@ -3840,6 +3841,7 @@ GameObject:
   m_Component:
   - component: {fileID: 497691907}
   - component: {fileID: 497691908}
+  - component: {fileID: 497691909}
   m_Layer: 5
   m_Name: Lives Displayer
   m_TagString: Untagged
@@ -3886,6 +3888,20 @@ MonoBehaviour:
   maxLives: 0
   maxShields: 0
   distance: 5
+--- !u!114 &497691909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497691906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23f68a2a2a53e414e981d3257e152661, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startingPosition: {x: 0, y: 0}
+  startingRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1001 &518209466
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6647,7 +6663,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -37.00006, y: 77.0029}
+  m_AnchoredPosition: {x: -37.00006, y: 76.7}
   m_SizeDelta: {x: 12, y: 12}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1143777994
@@ -11497,7 +11513,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -37.00006, y: 52.004486}
+  m_AnchoredPosition: {x: -37.00006, y: 50.7}
   m_SizeDelta: {x: 12, y: 14}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2027338831
@@ -11970,6 +11986,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fadeBg: {fileID: 1665683343}
   _fadeSpeed: 1.5
+  _scalablePanel: {fileID: 0}
   _stateManager: {fileID: 791162621}
 --- !u!1 &2101764897
 GameObject:
