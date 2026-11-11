@@ -42,6 +42,25 @@ public class InputObjectController : MonoBehaviour
         // starting from the startPosition, set position to be along a vector at a distance equal to how long it has been since Instantiation
         // that is probably not helpfull, sorry :(
         transform.position = startPosition + travelVector * (passedTime / travelTime);
+
+        if (passedTime > travelTime)
+        {
+
+
+            // kill yourself, you've accomplished your life's goal, getting to the end
+            DestroySelf();
+        }
     }
 
+    private void DestroySelf()
+    {
+        GameManager gameManager = manager.GetComponentInParent<GameManager>();
+
+        // juice (particle effect)
+        gameManager.CreateParticleEffect(GameManager.ParticleEffect.InputObjectDestroyed, transform);
+        // damage player
+        gameManager.AlterPlayerValue(GameManager.PlayerValue.Lives, -1);
+        // delete self
+        Destroy(gameObject);
+    }
 }

@@ -56,6 +56,11 @@ public class GameManager : MonoBehaviour
     //temporary 
     public string[] tempKeys;
 
+    // enums
+    public enum PlayerValue {None,Lives,Score,Shields};
+    public enum ParticleEffect {None,InputObjectDestroyed,IncorrectInput};
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -124,7 +129,7 @@ public class GameManager : MonoBehaviour
             if (shieldRegenTime <= Time.time)
             {
                 shieldRegenTime = Time.time + shieldRegenLength;
-                AlterPlayerValue("shields", 1);
+                AlterPlayerValue(PlayerValue.Shields, 1);
             }
         }
     }
@@ -178,7 +183,7 @@ public class GameManager : MonoBehaviour
             if (targetedController.assignedKey == key)
             {
                 // play a fun particle!! (THIS IS A JUICE HOUSEHOLD!!!)
-                CreateParticleEffect("inputObjectDestroyed", targetedInput.transform);
+                CreateParticleEffect(ParticleEffect.InputObjectDestroyed, targetedInput.transform);
                 // swap color scheme
                 colorManager.ColorSwap();
                 // Lmao idiot dies to a key press (Destory the targetedInput)
@@ -188,7 +193,7 @@ public class GameManager : MonoBehaviour
                 playerStreak++;
                 shieldRegenTime -= 1f; // reduce the time for shield regen by 1 second
                 // play all relevent effects;
-                AlterPlayerValue("score", 1);
+                AlterPlayerValue(PlayerValue.Score, 1);
 
                 // if the inputObjectQueue isn't empty (if it only has one item, then it would be the object we just destroyed)
                 inputObjectManager.ShiftQueue();
@@ -199,17 +204,18 @@ public class GameManager : MonoBehaviour
 
                 // maybe change the color pallet to red/some other hostile color?
 
-                CreateParticleEffect("incorrectInput", targetedInput.transform);
+                CreateParticleEffect(ParticleEffect.IncorrectInput, targetedInput.transform);
 
                 // if the player has no more shields left
                 if (playerShields == 0)
                 {
                     // lower thier lives by one
-                    AlterPlayerValue("lives", -1);
+                    AlterPlayerValue(PlayerValue.Lives, -1);
                 }
                 else
                 {
-                    AlterPlayerValue("shields", -1);
+                    // take away one of their sheilds
+                    AlterPlayerValue(PlayerValue.Shields, -1);
                 }
                 playerMisses++;
             }
@@ -306,17 +312,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void AlterPlayerValue(string valueId, float alterAmount)
+    public void AlterPlayerValue(PlayerValue valueId, float alterAmount)
     {
         // I know I *could* just do something like "value+=1"
         // but if I want certain particles to always play whenever the value is altered,
         // then a centralized function where all of that is controlled is ideal
 
-        if (valueId == null)
+        if (valueId == PlayerValue.None)
         {
             // you moron Sam, how could you have forgot the id?
         }
-        else if (valueId == "score")
+        else if (valueId == PlayerValue.Score)
         {
             // alter the score
             playerScore += (int)alterAmount;
@@ -330,7 +336,7 @@ public class GameManager : MonoBehaviour
                 // :( life is awful and everthing hurts. without my score, its just not worth it anymore
             }
         }
-        else if (valueId == "lives")
+        else if (valueId == PlayerValue.Lives)
         {
             // alter the lives
             playerLives += (int)alterAmount;
@@ -349,7 +355,7 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        else if (valueId == "shields")
+        else if (valueId == PlayerValue.Shields)
         {
             // alter the current Shield count
             playerShields += (int)alterAmount;
@@ -366,7 +372,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void CreateParticleEffect(string particleId, Transform locationInfo)
+    public void CreateParticleEffect(ParticleEffect particleId, Transform locationInfo)
     {
         // instatiate a particle at the specified transform's position
         // this function asks for a transform and not a Vector2, becuase I forsee some partice effect requiring rotation
