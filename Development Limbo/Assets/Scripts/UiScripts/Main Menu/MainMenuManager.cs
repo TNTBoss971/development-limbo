@@ -9,6 +9,7 @@ public class MainMenuManager : MonoBehaviour
     // Inspector Assigned Variables
     [SerializeField] protected Image _fadeBg = null;
     [SerializeField] protected float _fadeSpeed = 1.5f;
+    [SerializeField] protected Image _scalablePanel = null;
 
     // Public Variables
     public StateManager _stateManager;
@@ -69,17 +70,9 @@ public class MainMenuManager : MonoBehaviour
 
     public void Credits()
     {
-        // Starts the game and loads a new scene.
+        Instantiate(_scalablePanel, new Vector3(0,0,0), Quaternion.identity);
 
-        // Can't have the player goofing off and crashing the game.
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-
-        // call the coroutine to fade out the screen and load the new scene.
-        StartCoroutine(FadeIn(false, _fadeSpeed));
-
-        // we wait for the Fade to pass, then we start new scene.
-        Invoke("CreditsScene", _fadeSpeed);
+        //instance.transform.setParent(Credits)
     }
 
 
@@ -109,12 +102,6 @@ public class MainMenuManager : MonoBehaviour
     {
         // Loads the new scene after the fade out is complete.
         _stateManager.ActivateState(StateManager.State.Gameplay);
-    }
-
-    public void CreditsScene()
-    {
-        // Loads the new scene after the fade out is complete.
-        SceneManager.LoadScene("Closing Credits");
     }
 
     public void QuitGame()
