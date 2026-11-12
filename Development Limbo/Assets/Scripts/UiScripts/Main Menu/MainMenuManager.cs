@@ -9,7 +9,8 @@ public class MainMenuManager : MonoBehaviour
     // Inspector Assigned Variables
     [SerializeField] protected Image _fadeBg = null;
     [SerializeField] protected float _fadeSpeed = 1.5f;
-    [SerializeField] protected Image _scalablePanel = null;
+    [SerializeField] protected GameObject _scalablePanel = null;
+    [SerializeField] protected Transform _targetedCanvas = null;
 
     // Public Variables
     public StateManager _stateManager;
@@ -27,6 +28,11 @@ public class MainMenuManager : MonoBehaviour
 
         // make the game fade in at opening. More Streamlined...
         StartCoroutine(FadeIn(true, _fadeSpeed));
+    }
+
+    public void NewWindow()
+    {
+        Instantiate(_scalablePanel,_targetedCanvas,false);
     }
 
     IEnumerator FadeIn(bool fadeIn, float speed)
@@ -70,8 +76,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void Credits()
     {
-        Instantiate(_scalablePanel, new Vector3(0,0,0), Quaternion.identity);
-
+        NewWindow();
         //instance.transform.setParent(Credits)
     }
 
