@@ -158,7 +158,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 107.66, y: 31.16}
+  m_AnchoredPosition: {x: 107.66, y: 31.9}
   m_SizeDelta: {x: 12, y: 12}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &178510
@@ -1518,7 +1518,7 @@ RectTransform:
   m_GameObject: {fileID: 187534482}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 9.554}
-  m_LocalScale: {x: 0.005972263, y: 0.005972263, z: 0.005972263}
+  m_LocalScale: {x: 0.0047557554, y: 0.0047557554, z: 0.0047557554}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 275594669}
@@ -1530,7 +1530,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -556.29913, y: -252.96585}
+  m_AnchoredPosition: {x: -556.317, y: -252.945}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &190741606
@@ -3943,7 +3943,6 @@ GameObject:
   m_Component:
   - component: {fileID: 497691907}
   - component: {fileID: 497691908}
-  - component: {fileID: 497691909}
   m_Layer: 5
   m_Name: Lives Displayer
   m_TagString: Untagged
@@ -3990,25 +3989,6 @@ MonoBehaviour:
   maxLives: 0
   maxShields: 0
   distance: 5
---- !u!114 &497691909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 497691906}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23f68a2a2a53e414e981d3257e152661, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startingPosition: {x: 0, y: 0}
-  startingRotation: {x: 0, y: 0, z: 0, w: 0}
-  transformType: 0
-  verticalIntensity: 0
-  horizontalIntensity: 0
-  rotationIntensity: 0
-  cycleLength: 0
 --- !u!1001 &518209466
 PrefabInstance:
   m_ObjectHideFlags: 0
