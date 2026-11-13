@@ -442,6 +442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  alpha: 1
   isBackground: 0
 --- !u!1 &19796555
 GameObject:
@@ -2018,6 +2019,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
+  alpha: 1
   isBackground: 0
 --- !u!114 &251476219
 MonoBehaviour:
@@ -3932,6 +3934,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 3
+  alpha: 1
   isBackground: 0
 --- !u!1 &497691906
 GameObject:
@@ -4865,6 +4868,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  alpha: 1
   isBackground: 1
 --- !u!4 &727725620 stripped
 Transform:
@@ -5179,6 +5183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 3
+  alpha: 1
   isBackground: 0
 --- !u!1 &828757034
 GameObject:
@@ -5641,6 +5646,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  alpha: 1
   isBackground: 0
 --- !u!1001 &844137773
 PrefabInstance:
@@ -6273,7 +6279,7 @@ MonoBehaviour:
   m_RefResolutionX: 240
   m_RefResolutionY: 180
   m_CropFrame: 0
-  m_GridSnapping: 1
+  m_GridSnapping: 2
   m_FilterMode: 0
   m_UpscaleRT: 0
   m_PixelSnapping: 0
@@ -6516,6 +6522,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  alpha: 1
   isBackground: 0
 --- !u!1001 &1079762109
 PrefabInstance:
@@ -7156,6 +7163,8 @@ MonoBehaviour:
   horizontalIntensity: 1
   rotationIntensity: 0
   cycleLength: 10
+  randomizeOffset: 0
+  offsetOveride: 0
 --- !u!212 &1170964916
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -11334,6 +11343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  alpha: 1
   isBackground: 0
 --- !u!1 &1924059010
 GameObject:
@@ -12284,6 +12294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  alpha: 1
   isBackground: 0
 --- !u!1 &2122013280
 GameObject:
