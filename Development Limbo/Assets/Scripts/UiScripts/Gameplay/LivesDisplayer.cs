@@ -29,6 +29,7 @@ public class LivesDisplayer : MonoBehaviour
             lifeClone.transform.localPosition = new Vector2(i * distance, 0);
             
             activeLifeObjects[i] = lifeClone;
+            lifeClone.GetComponent<Wobbler>().offsetOveride = 2 * Mathf.PI * i / maxLives;
         }
 
         // create shield objects

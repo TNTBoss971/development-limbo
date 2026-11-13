@@ -406,8 +406,20 @@ public class GameManager : MonoBehaviour
             keyObjectData.Setup();
             index++;
         }
+    }
 
+    public void EndGame()
+    {
+        // delete all input objects
 
+        // delete all life and shield objects
+
+        // go back to main menu
+    }
+
+    public void StartGame()
+    {
+        // set max lives, lives, max shields, etc, according to difficulty
 
     }
 }
