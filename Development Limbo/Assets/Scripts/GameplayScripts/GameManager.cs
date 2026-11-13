@@ -11,9 +11,10 @@ public class GameManager : MonoBehaviour
     public int playerLives; // stores how many misses the player has left
     public int playerScore = 0; // stores player score
     public float playerAccuracy;
+    public int _loreLevelInteger = 0; // Very self explanatory. The greater the number, the more lore you get
+    public float _loreDifficulty = 2; // higher the number, the harder it is to get lore for the game
     private int playerHits;
     private int playerMisses;
-
     public int playerStreak; // input streak
 
     // shields
@@ -220,6 +221,26 @@ public class GameManager : MonoBehaviour
                 playerMisses++;
             }
         }
+    }
+
+    public void LoreKey() // Responsiblke for taking the score and then LORIFYING it
+    {
+        /*
+        // sees if the state manager active is the 
+       
+        while (stateManager.currentState != StateManager.State.MainMenu || stateManager.currentState != StateManager.State.None)
+        {
+            if (true) ;//(Mathf.FloorToInt(playerScore,_loreDifficulty)==_loreDifficulty)
+            {
+                _loreLevelInteger++;
+                Debug.Log(_loreLevelInteger);
+            }
+            else
+            {
+                Debug.Log(_loreLevelInteger);
+            }
+        }
+        */
     }
 
     public string PickKey()

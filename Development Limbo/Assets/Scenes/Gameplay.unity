@@ -3322,6 +3322,8 @@ MonoBehaviour:
   playerLives: 5
   playerScore: 0
   playerAccuracy: 0
+  _loreLevelInteger: 0
+  _loreDifficulty: 2
   playerStreak: 0
   playerMaxShields: 5
   playerShields: 0
