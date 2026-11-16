@@ -1216,6 +1216,7 @@ MonoBehaviour:
   _scalablePanel: {fileID: 0}
   _targetedCanvas: {fileID: 0}
   _stateManager: {fileID: 0}
+  _gameManager: {fileID: 0}
 --- !u!1001 &170906529
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3324,6 +3325,7 @@ MonoBehaviour:
   playerAccuracy: 0
   _loreLevelInteger: 0
   _loreDifficulty: 2
+  _lastScore: 0
   playerStreak: 0
   playerMaxShields: 5
   playerShields: 0
@@ -5005,7 +5007,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5aa13a57259bd54294289e677cf4bb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: 1
+  currentState: 2
   gameplayLayers:
     serializedVersion: 2
     m_Bits: 96
@@ -12195,6 +12197,7 @@ MonoBehaviour:
   _scalablePanel: {fileID: 1959664901417617367, guid: 008a9a97567027f4f90afa8902754bb7, type: 3}
   _targetedCanvas: {fileID: 19796556}
   _stateManager: {fileID: 791162621}
+  _gameManager: {fileID: 0}
 --- !u!1 &2101764897
 GameObject:
   m_ObjectHideFlags: 0

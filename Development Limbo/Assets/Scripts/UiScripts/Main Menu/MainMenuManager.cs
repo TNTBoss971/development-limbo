@@ -9,11 +9,12 @@ public class MainMenuManager : MonoBehaviour
     // Inspector Assigned Variables
     [SerializeField] protected Image _fadeBg = null;
     [SerializeField] protected float _fadeSpeed = 1.5f;
-    [SerializeField] protected GameObject _scalablePanel = null;
-    [SerializeField] protected Transform _targetedCanvas = null;
+    [SerializeField] protected GameObject _scalablePanel = null; // hoping to use it for movabl panels
+    [SerializeField] protected Transform _targetedCanvas = null; // targets specific canvas for updating.
 
     // Public Variables
-    public StateManager _stateManager;
+    private StateManager _stateManager;
+    private GameManager _gameManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected void Start()
@@ -55,6 +56,14 @@ public class MainMenuManager : MonoBehaviour
         }
         // just as an extra precaution
         _fadeBg.color = targetColor;
+    }
+
+    // resets the Gameplay scene so that we can start over again with a fresh game.
+    public void SetupGameScene()
+    {
+        _gameManager.playerLives = 5;
+        _gameManager.playerAccuracy = 0;
+        _gameManager.playerStreak = 0;
     }
 
 
@@ -106,6 +115,8 @@ public class MainMenuManager : MonoBehaviour
     public void LoadGame()
     {
         // Loads the new scene after the fade out is complete.
+        // Sets up gameplay scene
+        SetupGameScene();
         _stateManager.ActivateState(StateManager.State.Gameplay);
     }
 

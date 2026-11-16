@@ -11,8 +11,6 @@ public class GameManager : MonoBehaviour
     public int playerLives; // stores how many misses the player has left
     public int playerScore = 0; // stores player score
     public float playerAccuracy;
-    public int _loreLevelInteger = 0; // Very self explanatory. The greater the number, the more lore you get
-    public float _loreDifficulty = 2; // higher the number, the harder it is to get lore for the game
     private int playerHits;
     private int playerMisses;
     public int playerStreak; // input streak
@@ -23,6 +21,11 @@ public class GameManager : MonoBehaviour
 
     public float shieldRegenTime; // the time stamp at which a shield regens
     public float shieldRegenLength; // how long it takes to regen a shield in seconds
+
+    // Lore Info
+    public int _loreLevelInteger = 0; // Very self explanatory. The greater the number, the more lore you get
+    public float _loreDifficulty = 3; // higher the number, the harder it is to get lore for the game
+    public float _lastScore = 0; // stores the last score the player had before recent score. (Lore Level Reasons...)
 
     [Header("Input Objects Info")]
     public GameObject targetedInput; // always the first object in inputObjectQueue
@@ -110,6 +113,7 @@ public class GameManager : MonoBehaviour
 
             AccuracyLogic();
             ShieldLogic();
+            LoreKey();
         }
     }
 
@@ -225,22 +229,16 @@ public class GameManager : MonoBehaviour
 
     public void LoreKey() // Responsiblke for taking the score and then LORIFYING it
     {
-        /*
-        // sees if the state manager active is the 
-       
-        while (stateManager.currentState != StateManager.State.MainMenu || stateManager.currentState != StateManager.State.None)
+        // If the number is divisible by the lore difficulty, then it just increases by one
+
+        // if divisible, then increase lore level integer by one, else do nothing
+        if ((playerScore%_loreDifficulty==0) && playerScore != 0 && playerScore != _lastScore)
         {
-            if (true) ;//(Mathf.FloorToInt(playerScore,_loreDifficulty)==_loreDifficulty)
-            {
-                _loreLevelInteger++;
-                Debug.Log(_loreLevelInteger);
-            }
-            else
-            {
-                Debug.Log(_loreLevelInteger);
-            }
+            _loreLevelInteger++;
+
+            Debug.Log(_loreLevelInteger);
         }
-        */
+        _lastScore = playerScore;
     }
 
     public string PickKey()
