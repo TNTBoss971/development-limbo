@@ -11,14 +11,13 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] protected float _fadeSpeed = 1.5f;
     [SerializeField] protected GameObject _scalablePanel = null; // hoping to use it for movabl panels
     [SerializeField] protected Transform _targetedCanvas = null; // targets specific canvas for updating.
-
-    // Public Variables
-    private StateManager _stateManager;
-    private GameManager _gameManager;
+    [SerializeField]private StateManager _stateManager;
+    [SerializeField]private GameManager _gameManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected void Start()
     {
+
         // make it interactable
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -59,7 +58,7 @@ public class MainMenuManager : MonoBehaviour
     }
 
     // resets the Gameplay scene so that we can start over again with a fresh game.
-    public void SetupGameScene()
+    private void SetupGameScene()
     {
         _gameManager.playerLives = 5;
         _gameManager.playerAccuracy = 0;

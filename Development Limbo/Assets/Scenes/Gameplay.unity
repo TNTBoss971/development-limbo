@@ -472,16 +472,16 @@ RectTransform:
   m_GameObject: {fileID: 19796555}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 548.60004, y: 327.7}
-  m_SizeDelta: {x: 1097.2001, y: 655.4}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &19796557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -521,7 +521,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &19796559
 Canvas:
   m_ObjectHideFlags: 0
@@ -531,10 +531,10 @@ Canvas:
   m_GameObject: {fileID: 19796555}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 2
+  m_RenderMode: 1
   m_Camera: {fileID: 1001594871}
   m_PlaneDistance: 100
-  m_PixelPerfect: 0
+  m_PixelPerfect: 1
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
@@ -3323,14 +3323,14 @@ MonoBehaviour:
   playerLives: 5
   playerScore: 0
   playerAccuracy: 0
-  _loreLevelInteger: 0
-  _loreDifficulty: 2
-  _lastScore: 0
   playerStreak: 0
   playerMaxShields: 5
   playerShields: 0
   shieldRegenTime: 0
   shieldRegenLength: 10
+  _loreLevelInteger: 0
+  _loreDifficulty: 2
+  _lastScore: 0
   targetedInput: {fileID: 0}
   pointX: 0
   pointY: 0
@@ -5007,7 +5007,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5aa13a57259bd54294289e677cf4bb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: 2
+  currentState: 1
   gameplayLayers:
     serializedVersion: 2
     m_Bits: 96
@@ -12197,7 +12197,7 @@ MonoBehaviour:
   _scalablePanel: {fileID: 1959664901417617367, guid: 008a9a97567027f4f90afa8902754bb7, type: 3}
   _targetedCanvas: {fileID: 19796556}
   _stateManager: {fileID: 791162621}
-  _gameManager: {fileID: 0}
+  _gameManager: {fileID: 357564706}
 --- !u!1 &2101764897
 GameObject:
   m_ObjectHideFlags: 0
