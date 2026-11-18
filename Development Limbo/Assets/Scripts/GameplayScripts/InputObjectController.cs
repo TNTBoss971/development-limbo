@@ -50,6 +50,21 @@ public class InputObjectController : MonoBehaviour
             // kill yourself, you've accomplished your life's goal, getting to the end
             DestroySelf();
         }
+
+
+        // check if it was dropped
+        bool present = false;
+        foreach (GameObject inputObject in manager.inputObjectQueue)
+        {
+            if (inputObject == gameObject)
+            {
+                present = true;
+            }
+        }
+        if (!present)
+        {
+            DestroySelf();
+        }
     }
 
     private void DestroySelf()

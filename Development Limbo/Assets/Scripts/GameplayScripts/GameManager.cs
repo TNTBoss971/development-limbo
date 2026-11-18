@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -7,6 +8,14 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.UI;
 public class GameManager : MonoBehaviour
 {
+    [Header("Prior Game Info")]
+    public int startingLives;
+    public int startingMaxShields;
+
+    [Header("MASTER CONTROL")]
+    public bool isGameActive;
+    public StateManager stateManager;
+
     [Header("Player Info")]
     public int playerLives; // stores how many misses the player has left
     public int playerScore = 0; // stores player score
@@ -45,10 +54,9 @@ public class GameManager : MonoBehaviour
 
     [Header("Scene Objects")]
     public GameObject focusIndicator; // tells the player which input is first in queue
-    private InputObjectManager inputObjectManager;
-    public StateManager stateManager;
 
     [Header("Managers")]
+    private InputObjectManager inputObjectManager;
     public ColorManager colorManager;
 
     [Header("Prefabs")]
@@ -200,7 +208,7 @@ public class GameManager : MonoBehaviour
                 // play all relevent effects;
                 AlterPlayerValue(PlayerValue.Score, 1);
 
-                // if the inputObjectQueue isn't empty (if it only has one item, then it would be the object we just destroyed)
+                
                 inputObjectManager.ShiftQueue();
             }
             else
@@ -368,9 +376,10 @@ public class GameManager : MonoBehaviour
             {
                 // ouch
 
+                // die
                 if (playerLives <= 0)
                 {
-                    stateManager.ActivateState(StateManager.State.MainMenu);
+                    EndGame();
                 }
             }
         }
@@ -429,16 +438,32 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
+        isGameActive = false;
         // delete all input objects
+        inputObjectManager.Purge();
 
         // delete all life and shield objects
+        FindAnyObjectByType<LivesDisplayer>().Purge();
 
         // go back to main menu
+        stateManager.ActivateState(StateManager.State.MainMenu);
     }
 
     public void StartGame()
     {
         // set max lives, lives, max shields, etc, according to difficulty
+        playerLives = startingLives;
+        playerMaxShields = startingMaxShields;
+        
+        // reset all run-dependent values
+        playerMisses = 0;
+        playerScore = 0;
+        playerStreak = 0;
 
+        // start up other managers
+        FindAnyObjectByType<LivesDisplayer>().StartUp();
+        
+
+        isGameActive = true;
     }
 }

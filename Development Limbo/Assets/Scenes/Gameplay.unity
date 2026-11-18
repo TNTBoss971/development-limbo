@@ -3320,6 +3320,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 014855645b236d943b309893d4d558b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startingLives: 5
+  startingMaxShields: 5
+  isGameActive: 0
+  stateManager: {fileID: 791162621}
   playerLives: 5
   playerScore: 0
   playerAccuracy: 0
@@ -3342,7 +3346,6 @@ MonoBehaviour:
   distanceScaleExponent: 1
   distanceCutoff: 1
   focusIndicator: {fileID: 1239353424}
-  stateManager: {fileID: 791162621}
   colorManager: {fileID: 111898343}
   attackAction:
     m_Name: Attack
