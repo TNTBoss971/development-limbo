@@ -9,14 +9,15 @@ public class MainMenuManager : MonoBehaviour
     // Inspector Assigned Variables
     [SerializeField] protected Image _fadeBg = null;
     [SerializeField] protected float _fadeSpeed = 1.5f;
-    [SerializeField] protected Image _scalablePanel = null;
-
-    // Public Variables
-    public StateManager _stateManager;
+    [SerializeField] protected GameObject _scalablePanel = null; // hoping to use it for movabl panels
+    [SerializeField] protected Transform _targetedCanvas = null; // targets specific canvas for updating.
+    [SerializeField]private StateManager _stateManager;
+    [SerializeField]private GameManager _gameManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected void Start()
     {
+
         // make it interactable
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -27,6 +28,11 @@ public class MainMenuManager : MonoBehaviour
 
         // make the game fade in at opening. More Streamlined...
         StartCoroutine(FadeIn(true, _fadeSpeed));
+    }
+
+    public void NewWindow()
+    {
+        Instantiate(_scalablePanel,_targetedCanvas,false);
     }
 
     IEnumerator FadeIn(bool fadeIn, float speed)
@@ -51,6 +57,14 @@ public class MainMenuManager : MonoBehaviour
         _fadeBg.color = targetColor;
     }
 
+    // resets the Gameplay scene so that we can start over again with a fresh game.
+    private void SetupGameScene()
+    {
+        _gameManager.playerLives = 5;
+        _gameManager.playerAccuracy = 0;
+        _gameManager.playerStreak = 0;
+    }
+
 
     // Button Functions: These call Button is pressed. Sets up stage for fade.
     public void NewGame()
@@ -70,8 +84,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void Credits()
     {
-        Instantiate(_scalablePanel, new Vector3(0,0,0), Quaternion.identity);
-
+        NewWindow();
         //instance.transform.setParent(Credits)
     }
 
@@ -101,6 +114,8 @@ public class MainMenuManager : MonoBehaviour
     public void LoadGame()
     {
         // Loads the new scene after the fade out is complete.
+        // Sets up gameplay scene
+        SetupGameScene();
         _stateManager.ActivateState(StateManager.State.Gameplay);
     }
 

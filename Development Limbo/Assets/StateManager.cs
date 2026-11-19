@@ -11,6 +11,7 @@ public class StateManager : MonoBehaviour
 
     public State currentState;
 
+    private GameManager gameManager;
 
     public LayerMask gameplayLayers;
     public LayerMask mainMenuLayers;
@@ -18,7 +19,12 @@ public class StateManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        gameManager = GetComponentInChildren<GameManager>();
 
+        if (currentState == State.Gameplay)
+        {
+            gameManager.StartGame();
+        }
     }
 
     // Update is called once per frame
@@ -48,6 +54,10 @@ public class StateManager : MonoBehaviour
 
     public void ActivateState(State targetState)
     {
+        if (targetState == State.Gameplay)
+        {
+            gameManager.StartGame();
+        }
         currentState = targetState;
     }
 }

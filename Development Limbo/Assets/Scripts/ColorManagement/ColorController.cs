@@ -6,6 +6,7 @@ public class ColorController : MonoBehaviour
 {
     public enum RenderType {Image, SpriteRenderer, Light, TextMeshProUGUI, TextMeshPro}
     public RenderType type;
+    public float alpha = 1;
     [Header("Managers")]
     private ColorManager colorManager;
 
@@ -28,6 +29,7 @@ public class ColorController : MonoBehaviour
         {
             currentColor = colorManager.activeColor;
         }
+        currentColor.a = alpha;
 
         if (type == RenderType.Image)
         {

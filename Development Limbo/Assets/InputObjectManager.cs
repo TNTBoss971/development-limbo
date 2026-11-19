@@ -34,7 +34,7 @@ public class InputObjectManager : MonoBehaviour
     void Update()
     {
 
-        if (stateManager.currentState == StateManager.State.Gameplay)
+        if (gameManager.isGameActive)
         {
             if (inputObjectQueue.Count > 0)
             {
@@ -53,7 +53,7 @@ public class InputObjectManager : MonoBehaviour
         if (spawnDelay <= Time.time)
         {
             inputObjectQueue.Add(CreateKey());
-            spawnDelay = Time.time + Random.Range(0.1f, 1f);
+            spawnDelay = Time.time + Random.Range(0.1f, 0.75f);
         }
     }
 
@@ -98,5 +98,17 @@ public class InputObjectManager : MonoBehaviour
             inputObjectQueue = new List<GameObject>();
             targetedInput = null;
         }
+    }
+
+    public void Purge()
+    {
+        InputObjectController[] allInputObjectControllers = inputObjectsParent.GetComponentsInChildren<InputObjectController>();
+
+        foreach (InputObjectController inputObjectController in allInputObjectControllers) {
+            Destroy(inputObjectController.gameObject);
+        }
+
+        inputObjectQueue = new List<GameObject>();
+        targetedInput = null;
     }
 }

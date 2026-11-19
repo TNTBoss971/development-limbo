@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -7,13 +8,20 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.UI;
 public class GameManager : MonoBehaviour
 {
+    [Header("Prior Game Info")]
+    public int startingLives;
+    public int startingMaxShields;
+
+    [Header("MASTER CONTROL")]
+    public bool isGameActive;
+    public StateManager stateManager;
+
     [Header("Player Info")]
     public int playerLives; // stores how many misses the player has left
     public int playerScore = 0; // stores player score
     public float playerAccuracy;
     private int playerHits;
     private int playerMisses;
-
     public int playerStreak; // input streak
 
     // shields
@@ -22,6 +30,11 @@ public class GameManager : MonoBehaviour
 
     public float shieldRegenTime; // the time stamp at which a shield regens
     public float shieldRegenLength; // how long it takes to regen a shield in seconds
+
+    // Lore Info
+    public int _loreLevelInteger = 0; // Very self explanatory. The greater the number, the more lore you get
+    public float _loreDifficulty = 3; // higher the number, the harder it is to get lore for the game
+    public float _lastScore = 0; // stores the last score the player had before recent score. (Lore Level Reasons...)
 
     [Header("Input Objects Info")]
     public GameObject targetedInput; // always the first object in inputObjectQueue
@@ -41,10 +54,9 @@ public class GameManager : MonoBehaviour
 
     [Header("Scene Objects")]
     public GameObject focusIndicator; // tells the player which input is first in queue
-    private InputObjectManager inputObjectManager;
-    public StateManager stateManager;
 
     [Header("Managers")]
+    private InputObjectManager inputObjectManager;
     public ColorManager colorManager;
 
     [Header("Prefabs")]
@@ -109,6 +121,7 @@ public class GameManager : MonoBehaviour
 
             AccuracyLogic();
             ShieldLogic();
+            LoreKey();
         }
     }
 
@@ -195,7 +208,7 @@ public class GameManager : MonoBehaviour
                 // play all relevent effects;
                 AlterPlayerValue(PlayerValue.Score, 1);
 
-                // if the inputObjectQueue isn't empty (if it only has one item, then it would be the object we just destroyed)
+                
                 inputObjectManager.ShiftQueue();
             }
             else
@@ -220,6 +233,20 @@ public class GameManager : MonoBehaviour
                 playerMisses++;
             }
         }
+    }
+
+    public void LoreKey() // Responsiblke for taking the score and then LORIFYING it
+    {
+        // If the number is divisible by the lore difficulty, then it just increases by one
+
+        // if divisible, then increase lore level integer by one, else do nothing
+        if ((playerScore%_loreDifficulty==0) && playerScore != 0 && playerScore != _lastScore)
+        {
+            _loreLevelInteger++;
+
+            Debug.Log(_loreLevelInteger);
+        }
+        _lastScore = playerScore;
     }
 
     public string PickKey()
@@ -349,9 +376,10 @@ public class GameManager : MonoBehaviour
             {
                 // ouch
 
+                // die
                 if (playerLives <= 0)
                 {
-                    stateManager.ActivateState(StateManager.State.MainMenu);
+                    EndGame();
                 }
             }
         }
@@ -406,8 +434,36 @@ public class GameManager : MonoBehaviour
             keyObjectData.Setup();
             index++;
         }
+    }
 
+    public void EndGame()
+    {
+        isGameActive = false;
+        // delete all input objects
+        inputObjectManager.Purge();
 
+        // delete all life and shield objects
+        FindAnyObjectByType<LivesDisplayer>().Purge();
 
+        // go back to main menu
+        stateManager.ActivateState(StateManager.State.MainMenu);
+    }
+
+    public void StartGame()
+    {
+        // set max lives, lives, max shields, etc, according to difficulty
+        playerLives = startingLives;
+        playerMaxShields = startingMaxShields;
+        
+        // reset all run-dependent values
+        playerMisses = 0;
+        playerScore = 0;
+        playerStreak = 0;
+
+        // start up other managers
+        FindAnyObjectByType<LivesDisplayer>().StartUp();
+        
+
+        isGameActive = true;
     }
 }
